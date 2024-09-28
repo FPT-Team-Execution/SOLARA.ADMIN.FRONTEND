@@ -1,3 +1,5 @@
+import axiosClient from "../axios/axiosClient.ts";
+
 export const setLocalStorage = (key: string, value: unknown) => {
     if (!value) return
     if (typeof value === 'object') {
@@ -17,4 +19,24 @@ export const getLocalStorage = (key: string) => {
 
 export const removeLocalStorage = (key: string) => {
     window.localStorage.removeItem(key)
+}
+
+export const setJwtLocalStorage = (accessToken: string | null, refreshToken: string | null) => {
+    if (accessToken && refreshToken) {
+        setLocalStorage('accessToken', accessToken);
+        setLocalStorage('refreshToken', refreshToken);
+
+        axiosClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    } else {
+        removeLocalStorage('accessToken');
+        removeLocalStorage('refreshToken');
+        delete axiosClient.defaults.headers.common.Authorization;
+    }
+}
+
+export const getJwtLocalStorage = () => {
+    return {
+        accessToken: getLocalStorage('accessToken'),
+        refreshToken: getLocalStorage('refreshToken')
+    };
 }
