@@ -1,6 +1,6 @@
 import IconMoon from '../../assets/images/svg/IconMoon'
 import IconSun from '../../assets/images/svg/IconSun'
-import { getLocalStorage, removeLocalStorage, setLocalStorage } from '../../utils/helpers'
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from '../../utils/localStorage/helpers.ts'
 import {
     AppstoreOutlined,
     CodeSandboxOutlined,
@@ -34,7 +34,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuItem[] = [
     getItem(<Link to='/'>Dashboard</Link>, '/dashboard', <AppstoreOutlined />),
-    getItem(<Link to='/major'>Major</Link>, '/major', <CodeSandboxOutlined />),
+    getItem(<Link to='/flashcard'>FlashCard</Link>, '/flashcard', <CodeSandboxOutlined />),
     getItem(<Link to='/subject'>Subject</Link>, '/subject', <TagsOutlined />),
     getItem(<Link to='/lecturer'>Lecturer</Link>, '/lecturer', <UserOutlined />),
     getItem(<Link to='/student'>Student</Link>, '/student', <TeamOutlined />),
@@ -165,7 +165,7 @@ const BaseLayout = ({ children }: PropsWithChildren) => {
                         />
                         {children}
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}>Solara ©2024 Created by FPTU</Footer>
+                    <Footer style={{ textAlign: 'center' }}>Solara ©2024 Created by Solara Team</Footer>
                 </Layout>
             </Layout>
         </ConfigProvider>
