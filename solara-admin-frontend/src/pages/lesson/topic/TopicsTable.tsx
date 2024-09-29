@@ -1,7 +1,9 @@
+import CreateTopic from "./CreateTopic.tsx";
+
 const TopicsTable = () => {
     return (
         <div>
-            This is topic table
+            <CreateTopic></CreateTopic>
         </div>
     );
 };

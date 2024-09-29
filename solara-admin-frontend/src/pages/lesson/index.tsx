@@ -1,4 +1,4 @@
-import TopicsTable from "./components/TopicsTable.tsx";
+import TopicsTable from "./topic/TopicsTable.tsx";
 
 const Index = () => {
     return (
