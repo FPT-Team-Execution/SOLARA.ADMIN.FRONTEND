@@ -7,7 +7,7 @@ import {BASE_URL} from "../url/baseUrl.ts";
 const axiosClient = axios.create({
     baseURL: BASE_URL,
     headers: {
-        'content-type': 'multipart/form-data'
+        'content-type': 'application/json'
     },
     paramsSerializer: (params) => queryString.stringify(params),
     timeout: 10 * 1000

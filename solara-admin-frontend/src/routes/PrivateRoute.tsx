@@ -5,7 +5,7 @@ export default function PrivateRoute() {
 
     return (
         <BaseLayout>
-            <Outlet />
+            <Outlet/>
         </BaseLayout>
     )
 }
