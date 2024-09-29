@@ -1,5 +1,5 @@
 // api/axiosClient.js
-import { notification } from 'antd'
+import {notification} from 'antd'
 import axios from 'axios'
 import queryString from 'query-string'
 import {BASE_URL} from "../url/baseUrl.ts";
@@ -20,9 +20,9 @@ axiosClient.interceptors.request.use(async (config) => {
 axiosClient.interceptors.response.use(
     (response) => {
         if (response && response.data) {
-            return response.data
+            return response
         }
-        return response.data
+        return response
     },
     (error) => {
         notification.error({

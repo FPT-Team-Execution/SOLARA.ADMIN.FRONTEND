@@ -21,10 +21,16 @@ export type BaseModel = {
     statusCode: number
 }
 
+export type SubModel<TPayload> = {
+    success: boolean,
+    status: number,
+    payload: TPayload
+}
+
 export type PageReqModel = {
     page: number,
-    size: number,
-    sort: number
+    pageSize: number,
+    sort: string
 }
 
 export type PageResModel = {

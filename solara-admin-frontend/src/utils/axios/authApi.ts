@@ -2,14 +2,15 @@ import axiosClient from "./axiosClient.ts";
 import {AUTH_URL} from "../url/authUrl.ts";
 import {BaseReModel} from "../../types/general.type.ts";
 import {CreateUserResponseModel} from "../../types/user.type.ts";
-import {AxiosResponse} from "axios";
+
+interface IAuthApi {
+    login: () => Promise<BaseReModel<CreateUserResponseModel>>;
+}
 
 export const authApi: IAuthApi = {
     login: async () => {
-        return await axiosClient.post<BaseReModel<CreateUserResponseModel>>(AUTH_URL.LOGIN());
+        const response = await axiosClient.post<BaseReModel<CreateUserResponseModel>>(AUTH_URL.LOGIN());
+        return response.data;
     }
 }
 
-interface IAuthApi {
-    login: () => Promise<AxiosResponse<BaseReModel<CreateUserResponseModel>>>;
-}

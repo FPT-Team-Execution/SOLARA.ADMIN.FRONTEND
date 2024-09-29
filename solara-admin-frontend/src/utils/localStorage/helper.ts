@@ -12,7 +12,7 @@ export const getLocalStorage = (key: string) => {
         const data = JSON.parse(window.localStorage.getItem(key) ?? '')
         if (data) return data
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return window.localStorage.getItem(key)
     }
 }
