@@ -1,6 +1,6 @@
 import IconMoon from '../../assets/images/svg/IconMoon'
 import IconSun from '../../assets/images/svg/IconSun'
-import {getLocalStorage, removeLocalStorage, setLocalStorage} from '../../utils/localStorage/helpers.ts'
+import {getLocalStorage, removeLocalStorage, setLocalStorage} from '../../utils/localStorage/helper.ts'
 import {
     AppstoreOutlined,
     CodeSandboxOutlined,

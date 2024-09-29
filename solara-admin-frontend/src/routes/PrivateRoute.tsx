@@ -4,7 +4,7 @@ import {useRequest} from "ahooks";
 import {useClerk, useUser} from "@clerk/clerk-react";
 import {PATH_PUBLIC} from "./path.ts";
 import {notification} from "antd";
-import {NoPermission} from "../utils/message/helper.ts";
+import {loginSuccess, noPermission} from "../utils/message/helper.ts";
 
 export default function PrivateRoute() {
     const {user} = useUser();
@@ -17,11 +17,15 @@ export default function PrivateRoute() {
             if (!user || user.publicMetadata.role !== "Admin") {
                 notification.error({
                     message: 'Error',
-                    description: NoPermission()
+                    description: noPermission()
                 })
                 await signOut();
                 navigate(PATH_PUBLIC.home);
             }
+            notification.success({
+                message: 'Success',
+                description: loginSuccess()
+            })
         },
         {
             onError(e) {
