@@ -21,9 +21,8 @@ const AddNewCategory = () => {
     };
 
     const onFinish = async (values: any) => {
-
+        setSubmitLoading(true);
     };
-
 
     return (
         <>
