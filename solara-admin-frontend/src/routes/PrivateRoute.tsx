@@ -1,18 +1,21 @@
 import BaseLayout from '../layouts/BaseLayout';
 import {Outlet, useNavigate} from "react-router-dom";
 import {useRequest} from "ahooks";
-import {useClerk, useUser} from "@clerk/clerk-react";
+import {useAuth, useClerk, useUser} from "@clerk/clerk-react";
 import {PATH_PUBLIC} from "./path.ts";
 import {notification} from "antd";
 import {loginSuccess, noPermission} from "../utils/message/helper.ts";
+import {setJwtLocalStorage} from "../utils/localStorage/helper.ts";
+import React from "react";
 
-export default function PrivateRoute() {
+export default function PrivateRoute(): React.JSX.Element {
     const {user} = useUser();
+    const {getToken} = useAuth();
     const {signOut} = useClerk();
     const navigate = useNavigate();
 
     useRequest(
-        async () => {
+        async (): Promise<void> => {
             // Check if user exist with role Admin
             if (!user || user.publicMetadata.role !== "Admin") {
                 notification.error({
@@ -21,7 +24,12 @@ export default function PrivateRoute() {
                 })
                 await signOut();
                 navigate(PATH_PUBLIC.home);
+                return;
             }
+
+            const token: string | null = await getToken({template: 'Solara'});
+            setJwtLocalStorage(token)
+
             notification.success({
                 message: 'Success',
                 description: loginSuccess()

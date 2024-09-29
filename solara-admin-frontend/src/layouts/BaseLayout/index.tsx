@@ -29,7 +29,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuItem[] = [
     getItem(<Link to='/'>Dashboard</Link>, '/dashboard', <AppstoreOutlined/>),
-    getItem(<Link to='/flashcard'>Flashcard</Link>, '/flashcard', <CodeSandboxOutlined/>),
+    getItem(<Link to='/lesson'>Lesson</Link>, '/lesson', <CodeSandboxOutlined/>),
 ]
 
 const BaseLayout = ({children}: PropsWithChildren) => {

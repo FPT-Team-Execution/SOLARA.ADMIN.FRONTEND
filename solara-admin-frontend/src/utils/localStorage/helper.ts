@@ -17,26 +17,20 @@ export const getLocalStorage = (key: string) => {
     }
 }
 
-export const removeLocalStorage = (key: string) => {
+export const removeLocalStorage = (key: string): void => {
     window.localStorage.removeItem(key)
 }
 
-export const setJwtLocalStorage = (accessToken: string | null, refreshToken: string | null) => {
-    if (accessToken && refreshToken) {
+export const setJwtLocalStorage = (accessToken: string | null): void => {
+    if (accessToken) {
         setLocalStorage('accessToken', accessToken);
-        setLocalStorage('refreshToken', refreshToken);
-
         axiosClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
     } else {
         removeLocalStorage('accessToken');
-        removeLocalStorage('refreshToken');
         delete axiosClient.defaults.headers.common.Authorization;
     }
 }
 
-export const getJwtLocalStorage = () => {
-    return {
-        accessToken: getLocalStorage('accessToken'),
-        refreshToken: getLocalStorage('refreshToken')
-    };
+export const getJwtLocalStorage = (): string => {
+    return getLocalStorage('accessToken');
 }
