@@ -5,4 +5,5 @@ export const PATH_PUBLIC  = {
 export const PATH_ADMIN  = {
     dashboard: '/dashboard',
     lesson: '/lesson',
+    user: '/user'
 }

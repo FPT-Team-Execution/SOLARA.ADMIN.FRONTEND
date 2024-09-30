@@ -1,9 +1,10 @@
-import {Navigate, createBrowserRouter} from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import Dashboard from '../pages/dashboard'
-import {RedirectToSignIn, SignedIn, SignedOut} from '@clerk/clerk-react'
+import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 import Lesson from "../pages/lesson";
-import {PATH_ADMIN, PATH_PUBLIC} from "./path.ts";
+import User from "../pages/user"
+import { PATH_ADMIN, PATH_PUBLIC } from "./path.ts";
 
 export const Routes = createBrowserRouter([
     {
@@ -11,35 +12,42 @@ export const Routes = createBrowserRouter([
         element: (
             <>
                 <SignedIn>
-                    <PrivateRoute/>
+                    <PrivateRoute />
                 </SignedIn>
                 <SignedOut>
-                    <RedirectToSignIn/>
+                    <RedirectToSignIn />
                 </SignedOut>
             </>
         ),
         children: [
             {
                 index: true,
-                element: <Navigate to={PATH_ADMIN.dashboard}/>
+                element: <Navigate to={PATH_ADMIN.dashboard} />
             },
             {
                 path: PATH_ADMIN.dashboard,
-                element: <Dashboard/>,
+                element: <Dashboard />,
                 handle: {
                     crumb: () => 'Dashboard'
                 }
             },
             {
                 path: PATH_ADMIN.lesson,
-                element: <Lesson/>,
+                element: <Lesson />,
                 handle: {
                     crumb: () => 'Lesson'
                 }
             },
             {
+                path: PATH_ADMIN.user,
+                element: <User />,
+                handle: {
+                    crumb: () => 'User'
+                }
+            },
+            {
                 path: '*',
-                element: <Navigate to={PATH_PUBLIC.home}/>
+                element: <Navigate to={PATH_PUBLIC.home} />
             }
         ]
     }

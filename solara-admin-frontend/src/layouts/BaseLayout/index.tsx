@@ -1,20 +1,21 @@
 import IconMoon from '../../assets/images/svg/IconMoon'
 import IconSun from '../../assets/images/svg/IconSun'
-import {getLocalStorage, removeLocalStorage, setLocalStorage} from '../../utils/localStorage/helper.ts'
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from '../../utils/localStorage/helper.ts'
 import {
     AppstoreOutlined,
     CodeSandboxOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
+    UserOutlined
 } from '@ant-design/icons'
-import {UserButton} from '@clerk/clerk-react'
-import type {MenuProps} from 'antd'
-import {Breadcrumb, ConfigProvider, Flex, FloatButton, Layout, Menu, theme} from 'antd'
-import {PropsWithChildren, useEffect, useState} from 'react'
-import {Link, RouteObject, useLocation, useMatches} from 'react-router-dom'
+import { UserButton } from '@clerk/clerk-react'
+import type { MenuProps } from 'antd'
+import { Breadcrumb, ConfigProvider, Flex, FloatButton, Layout, Menu, theme } from 'antd'
+import { PropsWithChildren, useEffect, useState } from 'react'
+import { Link, RouteObject, useLocation, useMatches } from 'react-router-dom'
 
 
-const {Header, Content, Footer, Sider} = Layout
+const { Header, Content, Footer, Sider } = Layout
 
 type MenuItem = Required<MenuProps>['items'][number]
 
@@ -28,11 +29,12 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 }
 
 const items: MenuItem[] = [
-    getItem(<Link to='/'>Dashboard</Link>, '/dashboard', <AppstoreOutlined/>),
-    getItem(<Link to='/lesson'>Lesson</Link>, '/lesson', <CodeSandboxOutlined/>),
+    getItem(<Link to='/'>Dashboard</Link>, '/dashboard', <AppstoreOutlined />),
+    getItem(<Link to='/lesson'>Lesson</Link>, '/lesson', <CodeSandboxOutlined />),
+    getItem(<Link to='/user'>User</Link>, '/user', <UserOutlined />),
 ]
 
-const BaseLayout = ({children}: PropsWithChildren) => {
+const BaseLayout = ({ children }: PropsWithChildren) => {
     const [pathActive, setPathActive] = useState(['/dashboard'])
     const location = useLocation()
 
@@ -43,7 +45,7 @@ const BaseLayout = ({children}: PropsWithChildren) => {
     const [collapsed, setCollapsed] = useState(false)
     const [isDarkMode, setIsDarkMode] = useState(false)
 
-    const {defaultAlgorithm, darkAlgorithm} = theme
+    const { defaultAlgorithm, darkAlgorithm } = theme
 
     const matches: RouteObject[] = useMatches()
     const crumbs = matches
@@ -89,7 +91,7 @@ const BaseLayout = ({children}: PropsWithChildren) => {
                 }
             }}
         >
-            <Layout style={{minHeight: '100vh'}} className={isDarkMode ? 'dark' : ''}>
+            <Layout style={{ minHeight: '100vh' }} className={isDarkMode ? 'dark' : ''}>
                 <Sider
                     collapsible
                     reverseArrow
@@ -101,9 +103,9 @@ const BaseLayout = ({children}: PropsWithChildren) => {
                         <>
                             <div className={`px-5 border-t ${collapsed ? 'text-center' : 'text-right'}`}>
                                 {collapsed ? (
-                                    <MenuUnfoldOutlined width={50} height={50}/>
+                                    <MenuUnfoldOutlined width={50} height={50} />
                                 ) : (
-                                    <MenuFoldOutlined width={50} height={50}/>
+                                    <MenuFoldOutlined width={50} height={50} />
                                 )}
                             </div>
                         </>
@@ -129,7 +131,7 @@ const BaseLayout = ({children}: PropsWithChildren) => {
                     />
                 </Sider>
                 <Layout>
-                    <Header style={{padding: 0, background: isDarkMode ? '#141414' : '#fff'}} className='shadow-md'>
+                    <Header style={{ padding: 0, background: isDarkMode ? '#141414' : '#fff' }} className='shadow-md'>
                         <Flex justify='end' align='center' className='h-full px-10'>
                             {/* <Dropdown menu={{ items: itemsMenu }} arrow placement='bottomRight'>
                 <Space size={10} align='center' className='cursor-pointer'>
@@ -137,12 +139,12 @@ const BaseLayout = ({children}: PropsWithChildren) => {
                   <Typography>{user?.fullName}</Typography>
                 </Space>
               </Dropdown> */}
-                            <UserButton/>
+                            <UserButton />
                         </Flex>
                     </Header>
-                    <Content style={{margin: '0 16px'}}>
+                    <Content style={{ margin: '0 16px' }}>
                         <Breadcrumb
-                            style={{margin: '16px 0'}}
+                            style={{ margin: '16px 0' }}
                             items={crumbs.map((crumb) => ({
                                 title: crumb
                             }))}
@@ -150,11 +152,11 @@ const BaseLayout = ({children}: PropsWithChildren) => {
                         <FloatButton
                             className='min-h-[unset] w-10 h-10 m-auto text-center rounded-[50%] fixed bottom-10 right-10 p-0'
                             onClick={handleClick}
-                            icon={isDarkMode ? <IconSun/> : <IconMoon/>}
+                            icon={isDarkMode ? <IconSun /> : <IconMoon />}
                         />
                         {children}
                     </Content>
-                    <Footer style={{textAlign: 'center'}}>Solara ©2024 Created by Solara Team</Footer>
+                    <Footer style={{ textAlign: 'center' }}>Solara ©2024 Created by Solara Team</Footer>
                 </Layout>
             </Layout>
         </ConfigProvider>

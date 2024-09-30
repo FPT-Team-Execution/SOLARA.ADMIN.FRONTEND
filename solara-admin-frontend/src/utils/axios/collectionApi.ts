@@ -1,14 +1,14 @@
-import {BaseModel, BaseReModel, PageReqModel, PaginationResModel, SubResModel} from "../../types/general.type.ts";
-import {CollectionModel, CollectionResModel, UpsertCollectionReqModel} from "../../types/collection.type.ts";
+import { BaseModel, BaseReModel, PageReqModel, PaginationResModel, SubResModel } from "../../types/general.type.ts";
+import { CollectionModel, CollectionResModel } from "../../types/collection.type.ts";
 import axiosClient from "./axiosClient.ts";
-import {COLLECTION_URL} from "../url/collectionUrl.ts";
+import { COLLECTION_URL } from "../url/collectionUrl.ts";
 
 interface ICollectionApi {
     getCollections: (query: PageReqModel) => Promise<BaseReModel<SubResModel<PaginationResModel<CollectionModel>>>>
     getCollection: (id: string) => Promise<BaseReModel<CollectionModel>>;
     getOnTopic: (id: string) => Promise<BaseReModel<SubResModel<PaginationResModel<CollectionModel>>>>;
-    postCollection: (request: UpsertCollectionReqModel) => Promise<BaseReModel<CollectionResModel>>;
-    putCollection: (request: UpsertCollectionReqModel) => Promise<BaseReModel<CollectionResModel>>;
+    postCollection: () => Promise<BaseReModel<CollectionResModel>>;
+    putCollection: () => Promise<BaseReModel<CollectionResModel>>;
     deleteCollection: (id: string) => Promise<BaseModel>;
 }
 
@@ -25,12 +25,12 @@ export const collectionApi: ICollectionApi = {
         const response = await axiosClient.get<BaseReModel<SubResModel<PaginationResModel<CollectionModel>>>>(COLLECTION_URL.GET_ON_TOPIC(id));
         return response.data;
     },
-    postCollection: async (request: UpsertCollectionReqModel) => {
-        const response = await axiosClient.post<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(request));
+    postCollection: async () => {
+        const response = await axiosClient.post<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL());
         return response.data;
     },
-    putCollection: async (request: UpsertCollectionReqModel) => {
-        const response = await axiosClient.put<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(request));
+    putCollection: async () => {
+        const response = await axiosClient.put<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL());
         return response.data;
     },
     deleteCollection: async (id: string) => {
