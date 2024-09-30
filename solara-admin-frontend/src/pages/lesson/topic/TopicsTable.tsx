@@ -21,6 +21,15 @@ const TopicsTable = () => {
 
     return (
         <div>
+            {
+                topics?.map((topic, index) => {
+                    return (
+                        <>
+                            {topic.topicName}
+                        </>
+                    )
+                })
+            }
         </div>
     );
 };
