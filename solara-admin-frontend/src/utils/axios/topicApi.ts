@@ -1,10 +1,10 @@
 import axiosClient from "./axiosClient.ts";
-import {BaseModel, BaseReModel, PageReqModel, SubModel} from "../../types/general.type.ts";
+import {BaseModel, BaseReModel, PageReqModel, PaginationResModel, SubResModel} from "../../types/general.type.ts";
 import {TOPIC_URL} from "../url/topicUrl.ts";
-import {GetTopicResModels, TopicResModel} from "../../types/topic.type.ts";
+import {TopicModel, TopicResModel} from "../../types/topic.type.ts";
 
 interface ITopicApi {
-    getTopics: (query: PageReqModel) => Promise<BaseReModel<SubModel<GetTopicResModels>>>;
+    getTopics: (query: PageReqModel) => Promise<BaseReModel<SubResModel<PaginationResModel<TopicModel>>>>;
     getTopic: (id: string) => Promise<BaseReModel<TopicResModel>>;
     postTopic: () => Promise<BaseReModel<TopicResModel>>;
     putTopic: (id: string) => Promise<BaseReModel<TopicResModel>>;
@@ -13,7 +13,7 @@ interface ITopicApi {
 
 export const topicApi: ITopicApi = {
     getTopics: async (query: PageReqModel) => {
-        const response = await axiosClient.get<BaseReModel<SubModel<GetTopicResModels>>>(TOPIC_URL.GETS(query));
+        const response = await axiosClient.get<BaseReModel<SubResModel<PaginationResModel<TopicModel>>>>(TOPIC_URL.GETS(query));
         return response.data;
     },
     getTopic: async (id: string) => {

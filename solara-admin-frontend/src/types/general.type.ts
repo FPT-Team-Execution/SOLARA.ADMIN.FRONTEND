@@ -1,5 +1,3 @@
-import {TopicResModel} from "./topic.type.ts";
-
 export type BaseResReqModel<TRes, TReq> = {
     message: string,
     isSuccess: boolean,
@@ -21,7 +19,7 @@ export type BaseModel = {
     statusCode: number
 }
 
-export type SubModel<TPayload> = {
+export type SubResModel<TPayload> = {
     success: boolean,
     status: number,
     payload: TPayload
@@ -40,7 +38,7 @@ export type PageResModel = {
     totalPages: number
 }
 
-export type PaginationTopicResModel = {
-    content: TopicResModel[],
+export type PaginationResModel<TContent> = {
+    content: TContent[],
     page: PageReqModel
 }
