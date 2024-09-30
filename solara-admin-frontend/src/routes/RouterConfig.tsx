@@ -2,7 +2,7 @@ import {Navigate, createBrowserRouter} from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import Dashboard from '../pages/dashboard'
 import {RedirectToSignIn, SignedIn, SignedOut} from '@clerk/clerk-react'
-import Flashcard from "../pages/lesson";
+import Lesson from "../pages/lesson";
 import {PATH_ADMIN, PATH_PUBLIC} from "./path.ts";
 
 export const Routes = createBrowserRouter([
@@ -32,7 +32,7 @@ export const Routes = createBrowserRouter([
             },
             {
                 path: PATH_ADMIN.flashcard,
-                element: <Flashcard/>,
+                element: <Lesson/>,
                 handle: {
                     crumb: () => 'Lesson'
                 }

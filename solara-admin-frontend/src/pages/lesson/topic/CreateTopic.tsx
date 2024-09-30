@@ -4,44 +4,44 @@ import {PlusOutlined} from "@ant-design/icons";
 
 const {TextArea} = Input;
 
+interface IProps {
+    handleReloadTable: () => void
+}
 
-const AddNewCategory = () => {
+const AddNewCategory = (props: IProps) => {
     const [form] = Form.useForm();
-    const [loading, setLoading] = useState(true);
     const [submitLoading, setSubmitLoading] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
 
-    const showModal = async () => {
+    const handleOpen = async () => {
         setOpen(true);
-        setLoading(false)
     };
 
-    const handleCancel = () => {
+    const handleClose = () => {
         setOpen(false);
     };
 
-    const onFinish = async (values: any) => {
+    const handleSubmit = async (values: any) => {
         setSubmitLoading(true);
     };
 
     return (
         <>
-            <Button className={'bg-green-600'} type="primary" onClick={showModal}>
+            <Button className={'bg-green-600'} type="primary" onClick={handleOpen}>
                 <PlusOutlined/> Create topic
             </Button>
             <Modal
                 open={open}
                 title={'Create new topic'}
-                onCancel={handleCancel}
-                loading={loading}
+                onCancel={handleClose}
                 footer={[
-                    <Button key="back" onClick={handleCancel}>
+                    <Button key="back" onClick={handleClose}>
                         Cancel
                     </Button>,
                 ]}
             >
                 <div className={'flex w-full gap-2'}>
-                    <Form className={'w-full'} form={form} onFinish={onFinish} layout="vertical">
+                    <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
                         <Form.Item
                             label="Name"
                             name="name"

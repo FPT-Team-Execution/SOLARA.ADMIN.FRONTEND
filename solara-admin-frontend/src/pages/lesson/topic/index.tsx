@@ -1,9 +1,9 @@
-import Topic from "./topic/index";
+import TopicsTable from "./TopicsTable.tsx";
 
 const Index = () => {
     return (
         <div>
-            <Topic></Topic>
+            <TopicsTable></TopicsTable>
         </div>
     );
 };

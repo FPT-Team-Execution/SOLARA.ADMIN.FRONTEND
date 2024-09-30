@@ -1,4 +1,4 @@
-import {TopicModel} from "./topic.type.ts";
+import {TopicResModel} from "./topic.type.ts";
 
 export type BaseResReqModel<TRes, TReq> = {
     message: string,
@@ -40,7 +40,7 @@ export type PageResModel = {
     totalPages: number
 }
 
-export type PaginationTopicResponseModel = {
-    content: TopicModel[],
+export type PaginationTopicResModel = {
+    content: TopicResModel[],
     page: PageReqModel
 }

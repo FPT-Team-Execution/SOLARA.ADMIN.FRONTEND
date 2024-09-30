@@ -1,18 +1,18 @@
 import {PageReqModel} from "./general.type.ts";
 
-export type TopicModel = {
+export type TopicResModel = {
     topicId: string,
     createAt: Date,
     description: string | null,
     topicName: string | null
 }
 
-export type UpsertTopicModel = {
+export type UpsertTopicReqModel = {
     topicName: string,
     topicDescription: string
 }
 
-export type GetTopicModels = {
-    content: TopicModel[],
+export type GetTopicResModels = {
+    content: TopicResModel[],
     page: PageReqModel
 }
