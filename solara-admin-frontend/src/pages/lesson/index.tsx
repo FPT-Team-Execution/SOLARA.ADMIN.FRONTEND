@@ -1,4 +1,4 @@
-import Topic from "./topic/index";
+import Topic from "./topic/topicPage.tsx";
 
 const Index = () => {
     return (

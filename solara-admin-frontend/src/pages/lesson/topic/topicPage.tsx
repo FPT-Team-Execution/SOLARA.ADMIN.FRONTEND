@@ -1,6 +1,6 @@
 import TopicsTable from "../../../components/topic/TopicsTable.tsx";
 
-const Index = () => {
+const TopicPage = () => {
     return (
         <div>
             <TopicsTable></TopicsTable>
@@ -8,4 +8,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default TopicPage;
