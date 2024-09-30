@@ -1,8 +1,8 @@
 import {useState} from "react";
-import {TopicResModel} from "../../../types/topic.type.ts";
-import {PageReqModel} from "../../../types/general.type.ts";
+import {TopicResModel} from "../../types/topic.type.ts";
+import {PageReqModel} from "../../types/general.type.ts";
 import {useRequest} from "ahooks";
-import {topicApi} from "../../../utils/axios/topicApi.ts";
+import {topicApi} from "../../utils/axios/topicApi.ts";
 import CreateTopic from "./CreateTopic.tsx";
 
 const TopicsTable = () => {

@@ -31,7 +31,7 @@ export const Routes = createBrowserRouter([
                 }
             },
             {
-                path: PATH_ADMIN.flashcard,
+                path: PATH_ADMIN.lesson,
                 element: <Lesson/>,
                 handle: {
                     crumb: () => 'Lesson'
