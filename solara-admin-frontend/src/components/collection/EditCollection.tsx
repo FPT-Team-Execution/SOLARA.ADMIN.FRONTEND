@@ -60,8 +60,7 @@ const EditCollection = (props: IProps) => {
 
     return (
         <>
-            <Button type="default" onClick={handleOpen}>
-                <EditOutlined />
+            <Button type="default" onClick={handleOpen} icon={<EditOutlined />}>
             </Button>
             <Modal
                 open={open}

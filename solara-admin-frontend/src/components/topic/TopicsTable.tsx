@@ -20,7 +20,7 @@ const TopicsTable = () => {
     const [page, setPage] = useState<PageResModel>();
     const [query, setQuery] = useState<PageReqModel>({
         page: 1,
-        pageSize: 5,
+        pageSize: 50,
         sort: ""
     });
 

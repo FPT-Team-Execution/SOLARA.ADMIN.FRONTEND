@@ -22,18 +22,16 @@ const DeleteCollection = (props: IProps) => {
     return (
         <>
             <Popconfirm
-                className={'bg-red-600'}
                 title="Confirmation"
                 description="Are you sure to delete?"
                 onConfirm={() => deleteCollection()}
             >
                 <Button
                     loading={loading}
-                    className={'bg-red-500'}
                     type="primary"
-                    block
+                    danger
+                    icon={<DeleteOutlined />}
                 >
-                    <DeleteOutlined />
                 </Button>
             </Popconfirm>
         </>

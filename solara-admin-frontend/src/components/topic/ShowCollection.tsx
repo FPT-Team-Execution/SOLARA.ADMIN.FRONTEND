@@ -11,8 +11,7 @@ const ShowCollection = (props: IProps) => {
     return (
         <>
             <Link to={`${PATH_ADMIN.collection}?topicId=${props.topicId}`} >
-                <Button type="default">
-                    <SettingOutlined />
+                <Button type="default" icon={<SettingOutlined />}>
                 </Button>
             </Link >
         </>

@@ -49,8 +49,8 @@ const CreateCollection = (props: IProps) => {
 
     return (
         <>
-            <Button className={'bg-green-600'} type="primary" onClick={handleOpen}>
-                <PlusOutlined /> Create
+            <Button className={'bg-green-600'} type="primary" onClick={handleOpen} icon={<PlusOutlined />}>
+                Create
             </Button>
             <Modal
                 open={open}

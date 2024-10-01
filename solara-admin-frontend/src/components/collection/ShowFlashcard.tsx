@@ -11,8 +11,7 @@ const ShowFlashcard = (props: IProps) => {
   return (
     <>
       <Link to={`${PATH_ADMIN.flashcard}?collectionId=${props.collectionId}`} >
-        <Button type="default">
-          <SettingOutlined />
+        <Button type="default" icon={<SettingOutlined />}>
         </Button>
       </Link >
     </>

@@ -15,8 +15,8 @@ const CreateTopic = (props: IProps) => {
     const [form] = Form.useForm<UpsertTopicReqModel>();
     const [open, setOpen] = useState(false);
 
-    const { loading, run: postTopic } = useRequest(async (value : UpsertTopicReqModel) => {
-        const request : UpsertTopicReqModel = {
+    const { loading, run: postTopic } = useRequest(async (value: UpsertTopicReqModel) => {
+        const request: UpsertTopicReqModel = {
             topicName: value.topicName,
             topicDescription: value.topicDescription
         }
@@ -48,8 +48,8 @@ const CreateTopic = (props: IProps) => {
 
     return (
         <>
-            <Button className={'bg-green-600'} type="primary" onClick={handleOpen}>
-                <PlusOutlined /> Create
+            <Button className={'bg-green-600'} type="primary" onClick={handleOpen} icon={<PlusOutlined />}>
+                Create
             </Button>
             <Modal
                 open={open}

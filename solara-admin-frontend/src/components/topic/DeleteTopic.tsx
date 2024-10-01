@@ -21,18 +21,17 @@ const DeleteTopic = (props: IProps) => {
 
     return (
         <Popconfirm
-            className={'bg-red-600'}
             title="Confirmation"
             description="Are you sure to delete?"
             onConfirm={() => deleteTopic()}
+
         >
             <Button
                 loading={loading}
-                className={'bg-red-500'}
                 type="primary"
-                block
+                icon={<DeleteOutlined />}
+                danger
             >
-                <DeleteOutlined />
             </Button>
         </Popconfirm>
 
