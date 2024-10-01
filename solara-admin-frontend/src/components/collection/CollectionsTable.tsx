@@ -31,7 +31,6 @@ const CollectionsTable = (props: IProps) => {
         setPage(response.responseRequest?.page);
     }, {})
 
-
     const columns: TableProps<CollectionModel>['columns'] = [
         {
             title: 'Id',
