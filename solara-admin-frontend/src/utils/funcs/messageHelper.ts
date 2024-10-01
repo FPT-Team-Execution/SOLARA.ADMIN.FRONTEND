@@ -10,5 +10,8 @@ export const messageHelper = {
     },
     updateSucess: (objectName: string): string => {
         return `Update ${objectName} successfully!`
+    },
+    createSucess: (objectName: string): string => {
+        return `Create ${objectName} successfully!`
     }
 }

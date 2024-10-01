@@ -4,12 +4,13 @@ import { CollectionModel } from "../../types/collection.type"
 import { PageReqModel, PageResModel } from "../../types/general.type"
 import { useRequest } from "ahooks"
 import { collectionApi } from "../../utils/axios/collectionApi"
-import { Space, Table, TableProps } from "antd"
+import { Button, Space, Table, TableProps } from "antd"
 import { shortenString } from "../../utils/funcs/stringHelpers"
 import { formatDateTime } from "../../utils/funcs/datetimeHelper"
 import DeleteCollection from "./DeleteCollection"
 import EditCollection from "./EditCollection"
 import ShowFlashcard from "./ShowFlashcard"
+import { ReloadOutlined } from "@ant-design/icons"
 
 interface IProps {
     topicId: string
@@ -70,6 +71,9 @@ const CollectionsTable = (props: IProps) => {
     return (
         <div>
             <div className="flex float-end space-x-2 p-4">
+                <Button type="dashed" onClick={refresh} icon={<ReloadOutlined />}>
+                    Reload
+                </Button>
                 <CreateCollection topicId={props.topicId} handleReloadTable={refresh} ></CreateCollection>
             </div>
             <div>

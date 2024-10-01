@@ -3,7 +3,7 @@ import { BaseModel, BaseReModel, PageReqModel, PaginationResModel } from "../../
 import { TOPIC_URL } from "../url/topicUrl.ts";
 import { TopicModel, TopicResModel, UpsertTopicReqModel } from "../../types/topic.type.ts";
 import { notification } from "antd";
-import { messageHelper } from "../message/helper.ts";
+import { messageHelper } from "../funcs/messageHelper.ts";
 
 interface ITopicApi {
     getTopics: (query: PageReqModel) => Promise<BaseReModel<PaginationResModel<TopicModel>>>;
@@ -24,6 +24,10 @@ export const topicApi: ITopicApi = {
     },
     postTopic: async (request: UpsertTopicReqModel) => {
         const response = await axiosClient.post<BaseReModel<TopicResModel>>(TOPIC_URL.GET_POS_PUT_DEL(), request);
+        if (response.data.isSuccess == true) notification.success({
+            message: 'Success',
+            description: messageHelper.createSucess("topic")
+        })
         return response.data;
     },
     putTopic: async (id: string, request: UpsertTopicReqModel) => {

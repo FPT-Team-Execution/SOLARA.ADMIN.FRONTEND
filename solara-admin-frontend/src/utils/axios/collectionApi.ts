@@ -2,6 +2,8 @@ import { BaseModel, BaseReModel, PageReqModel, PaginationResModel } from "../../
 import { CollectionModel, CollectionResModel, UpsertCollectionReqModel } from "../../types/collection.type.ts";
 import axiosClient from "./axiosClient.ts";
 import { COLLECTION_URL } from "../url/collectionUrl.ts";
+import { notification } from "antd";
+import { messageHelper } from "../funcs/messageHelper.ts";
 
 interface ICollectionApi {
     getCollections: (query: PageReqModel) => Promise<BaseReModel<PaginationResModel<CollectionModel>>>
@@ -27,14 +29,32 @@ export const collectionApi: ICollectionApi = {
     },
     postCollection: async (request: UpsertCollectionReqModel) => {
         const response = await axiosClient.post<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(), request);
+        if (response.data.isSuccess == true) {
+            notification.success({
+                message: "Sucess",
+                description: messageHelper.createSucess("collection")
+            })
+        }
         return response.data;
     },
     putCollection: async (id: string, request: UpsertCollectionReqModel) => {
         const response = await axiosClient.put<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(id), request);
+        if (response.data.isSuccess == true) {
+            notification.success({
+                message: "Sucess",
+                description: messageHelper.updateSucess("collection")
+            })
+        }
         return response.data;
     },
     deleteCollection: async (id: string) => {
         const response = await axiosClient.delete<BaseModel>(COLLECTION_URL.GET_POS_PUT_DEL(id));
+        if (response.data.isSuccess == true) {
+            notification.success({
+                message: "Sucess",
+                description: messageHelper.deleteSucess("collection")
+            })
+        }
         return response.data;
     }
 }

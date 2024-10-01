@@ -4,7 +4,7 @@ import {useRequest} from "ahooks";
 import {useAuth, useClerk, useUser} from "@clerk/clerk-react";
 import {PATH_PUBLIC} from "./path.ts";
 import {notification} from "antd";
-import {messageHelper} from "../utils/message/helper.ts";
+import {messageHelper} from "../utils/funcs/messageHelper.ts";
 import {setJwtLocalStorage} from "../utils/localStorage/helper.ts";
 import React from "react";
 

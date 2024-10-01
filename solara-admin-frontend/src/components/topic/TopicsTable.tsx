@@ -69,8 +69,8 @@ const TopicsTable = () => {
     return (
         <div>
             <div className="flex float-end space-x-2 p-4">
-                <Button type="dashed" onClick={refresh}>
-                    <ReloadOutlined /> Reload
+                <Button type="dashed" onClick={refresh} icon={<ReloadOutlined />}>
+                    Reload
                 </Button>
                 <CreateTopic handleReloadTable={refresh}></CreateTopic>
             </div>
