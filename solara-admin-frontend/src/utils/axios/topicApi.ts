@@ -9,7 +9,7 @@ interface ITopicApi {
     getTopics: (query: PageReqModel) => Promise<BaseReModel<PaginationResModel<TopicModel>>>;
     getTopic: (id: string) => Promise<BaseReModel<TopicResModel>>;
     postTopic: (request: UpsertTopicReqModel) => Promise<BaseReModel<TopicResModel>>;
-    putTopic: (id: string) => Promise<BaseReModel<TopicResModel>>;
+    putTopic: (id: string, request: UpsertTopicReqModel) => Promise<BaseReModel<TopicResModel>>;
     deleteTopic: (id: string) => Promise<BaseModel>;
 }
 
@@ -26,8 +26,12 @@ export const topicApi: ITopicApi = {
         const response = await axiosClient.post<BaseReModel<TopicResModel>>(TOPIC_URL.GET_POS_PUT_DEL(), request);
         return response.data;
     },
-    putTopic: async (id: string) => {
-        const response = await axiosClient.put<BaseReModel<TopicResModel>>(TOPIC_URL.GET_POS_PUT_DEL(id));
+    putTopic: async (id: string, request: UpsertTopicReqModel) => {
+        const response = await axiosClient.put<BaseReModel<TopicResModel>>(TOPIC_URL.GET_POS_PUT_DEL(id), request);
+        if (response.data.isSuccess == true) notification.success({
+            message: 'Success',
+            description: messageHelper.updateSucess("topic")
+        })
         return response.data;
     },
     deleteTopic: async (id: string) => {

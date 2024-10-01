@@ -1,26 +1,27 @@
-import { useState } from "react";
-import { Button, Form, Input, Modal } from 'antd';
-import { PlusOutlined } from "@ant-design/icons";
-import { UpsertTopicReqModel } from "../../types/topic.type";
-import { topicApi } from "../../utils/axios/topicApi";
-import { useRequest } from "ahooks";
-
-const { TextArea } = Input;
+import { Button, Input, Modal } from 'antd'
+import { EditOutlined } from "@ant-design/icons";
+import { Form } from 'antd';
+import { TopicModel, UpsertTopicReqModel } from '../../types/topic.type';
+import { useState } from 'react';
+import { useRequest } from 'ahooks';
+import { topicApi } from '../../utils/axios/topicApi';
+import TextArea from 'antd/es/input/TextArea';
 
 interface IProps {
+    topic: TopicModel,
     handleReloadTable: () => void
 }
 
-const CreateTopic = (props: IProps) => {
+const EditTopic = (props: IProps) => {
     const [form] = Form.useForm<UpsertTopicReqModel>();
     const [open, setOpen] = useState(false);
 
-    const { loading, run: postTopic } = useRequest(async (value : UpsertTopicReqModel) => {
-        const request : UpsertTopicReqModel = {
+    const { loading, run: putTopic } = useRequest(async (id: string, value: UpsertTopicReqModel) => {
+        const request: UpsertTopicReqModel = {
             topicName: value.topicName,
             topicDescription: value.topicDescription
         }
-        const response = await topicApi.postTopic(request);
+        const response = await topicApi.putTopic(id, request);
         if (response.isSuccess == true) {
             form.resetFields();
             setOpen(false);
@@ -34,7 +35,15 @@ const CreateTopic = (props: IProps) => {
         }
     });
 
+    const setInitialFormValues = () => {
+        form.setFieldsValue({
+            topicName: props.topic.topicName!,
+            topicDescription: props.topic.description!
+        })
+    }
+
     const handleOpen = async () => {
+        setInitialFormValues();
         setOpen(true);
     };
 
@@ -43,17 +52,17 @@ const CreateTopic = (props: IProps) => {
     };
 
     const handleSubmit = async (values: UpsertTopicReqModel) => {
-        postTopic(values)
+        putTopic(props.topic.topicId, values)
     };
 
     return (
         <>
             <Button className={'bg-green-600'} type="primary" onClick={handleOpen}>
-                <PlusOutlined /> Create topic
+                <EditOutlined />
             </Button>
             <Modal
                 open={open}
-                title={'Create new topic'}
+                title={'Edit topic'}
                 onCancel={handleClose}
                 footer={[
                     <Button key="back" onClick={handleClose}>
@@ -81,7 +90,7 @@ const CreateTopic = (props: IProps) => {
 
                         <Form.Item>
                             <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
-                                Create
+                                Update
                             </Button>
                         </Form.Item>
                     </Form>
@@ -90,6 +99,6 @@ const CreateTopic = (props: IProps) => {
             </Modal>
         </>
     );
-};
+}
 
-export default CreateTopic;
+export default EditTopic

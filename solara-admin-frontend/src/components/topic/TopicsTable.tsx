@@ -3,9 +3,13 @@ import { TopicModel } from "../../types/topic.type.ts";
 import { PageReqModel } from "../../types/general.type.ts";
 import { useRequest } from "ahooks";
 import { topicApi } from "../../utils/axios/topicApi.ts";
-import CreateTopic from "./CreateTopic.tsx";
 import { Button, Space, Table, TableProps } from "antd";
-import { EditOutlined, DeleteOutlined, ReloadOutlined } from "@ant-design/icons";
+import { ReloadOutlined } from "@ant-design/icons";
+import { shortenString } from "../../utils/funcs/stringHelpers.ts";
+import DeleteTopic from "./DeleteTopic.tsx";
+import EditTopic from "./EditTopic.tsx";
+import { formatDateTime } from "../../utils/funcs/datetimeHelper.ts";
+import CreateTopic from "./CreateTopic.tsx";
 
 
 
@@ -35,6 +39,7 @@ const TopicsTable = () => {
             title: 'Id',
             dataIndex: 'topicId',
             key: 'topicId',
+            render: (topicId) => shortenString(topicId)
         },
         {
             title: 'Name',
@@ -50,18 +55,15 @@ const TopicsTable = () => {
             title: 'Created At',
             dataIndex: 'createAt',
             key: 'createAt',
+            render: (datetime) => formatDateTime(datetime)
         },
         {
             title: 'Action',
             key: 'action',
             render: (record: TopicModel) => (
-                <Space size="middle">
-                    <Button type="dashed">
-                        <EditOutlined /> Edit
-                    </Button>
-                    <Button className="bg-red-600" type="primary" onClick={() => topicApi.deleteTopic(record.topicId)}>
-                        <DeleteOutlined /> Delete
-                    </Button>
+                <Space size="small">
+                    <EditTopic topic={record} handleReloadTable={handleReloadTable}></EditTopic>
+                    <DeleteTopic handleReloadTable={handleReloadTable} id={record.topicId}></DeleteTopic>
                 </Space>
             ),
         },
@@ -76,7 +78,7 @@ const TopicsTable = () => {
                 <CreateTopic handleReloadTable={handleReloadTable}></CreateTopic>
             </div>
             <div>
-                <Table loading={loading} className="shadow" dataSource={topics} columns={columns} />;
+                <Table loading={loading} className="shadow" dataSource={topics} columns={columns} key={"d"} />
             </div>
         </div>
     );

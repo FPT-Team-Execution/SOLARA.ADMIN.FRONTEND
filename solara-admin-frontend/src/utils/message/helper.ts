@@ -7,5 +7,8 @@ export const messageHelper = {
     },
     deleteSucess: (objectName: string): string => {
         return `Delete ${objectName} successfully!`
+    },
+    updateSucess: (objectName: string): string => {
+        return `Update ${objectName} successfully!`
     }
 }
