@@ -1,38 +1,13 @@
-import { useState } from "react";
-import { Button, Form, Input, Modal } from 'antd';
-import { PlusOutlined } from "@ant-design/icons";
-import { UpsertTopicReqModel } from "../../types/topic.type";
-import { topicApi } from "../../utils/axios/topicApi";
-import { useRequest } from "ahooks";
+import { EditOutlined } from "@ant-design/icons"
+import { Button, Modal, Input } from "antd"
+import TextArea from "antd/es/input/TextArea"
+import { Form } from "antd"
+import { UpsertCollectionReqModel } from "../../types/collection.type"
+import { useState } from "react"
 
-const { TextArea } = Input;
-
-interface IProps {
-    handleReloadTable: () => void
-}
-
-const CreateTopic = (props: IProps) => {
-    const [form] = Form.useForm<UpsertTopicReqModel>();
+const EditCollection = () => {
+    const [form] = Form.useForm<UpsertCollectionReqModel>();
     const [open, setOpen] = useState(false);
-
-    const { loading, run: postTopic } = useRequest(async (value : UpsertTopicReqModel) => {
-        const request : UpsertTopicReqModel = {
-            topicName: value.topicName,
-            topicDescription: value.topicDescription
-        }
-        const response = await topicApi.postTopic(request);
-        if (response.isSuccess == true) {
-            form.resetFields();
-            setOpen(false);
-            props.handleReloadTable();
-        }
-    }, {
-        manual: true,
-        onError: () => {
-        },
-        onSuccess: () => {
-        }
-    });
 
     const handleOpen = async () => {
         setOpen(true);
@@ -42,18 +17,17 @@ const CreateTopic = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertTopicReqModel) => {
-        postTopic(values)
+    const handleSubmit = async (values: UpsertCollectionReqModel) => {
     };
 
     return (
         <>
-            <Button className={'bg-green-600'} type="primary" onClick={handleOpen}>
-                <PlusOutlined /> Create
+            <Button type="default" onClick={handleOpen}>
+                <EditOutlined />
             </Button>
             <Modal
                 open={open}
-                title={'Create new topic'}
+                title={'Edit collection'}
                 onCancel={handleClose}
                 footer={[
                     <Button key="back" onClick={handleClose}>
@@ -80,8 +54,8 @@ const CreateTopic = (props: IProps) => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
-                                Create
+                            <Button className={'bg-green-600'} type="primary" htmlType="submit">
+                                Update
                             </Button>
                         </Form.Item>
                     </Form>
@@ -89,7 +63,7 @@ const CreateTopic = (props: IProps) => {
 
             </Modal>
         </>
-    );
-};
+    )
+}
 
-export default CreateTopic;
+export default EditCollection

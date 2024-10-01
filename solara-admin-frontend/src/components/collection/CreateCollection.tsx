@@ -1,26 +1,27 @@
+import { Button, Form, Input, Modal } from "antd";
+import { UpsertCollectionReqModel } from "../../types/collection.type";
 import { useState } from "react";
-import { Button, Form, Input, Modal } from 'antd';
-import { PlusOutlined } from "@ant-design/icons";
-import { UpsertTopicReqModel } from "../../types/topic.type";
-import { topicApi } from "../../utils/axios/topicApi";
 import { useRequest } from "ahooks";
-
-const { TextArea } = Input;
+import TextArea from "antd/es/input/TextArea";
+import { PlusOutlined } from "@ant-design/icons";
+import { collectionApi } from "../../utils/axios/collectionApi";
 
 interface IProps {
+    topicId: string
     handleReloadTable: () => void
 }
 
-const CreateTopic = (props: IProps) => {
-    const [form] = Form.useForm<UpsertTopicReqModel>();
+const CreateCollection = (props: IProps) => {
+    const [form] = Form.useForm<UpsertCollectionReqModel>();
     const [open, setOpen] = useState(false);
 
-    const { loading, run: postTopic } = useRequest(async (value : UpsertTopicReqModel) => {
-        const request : UpsertTopicReqModel = {
-            topicName: value.topicName,
-            topicDescription: value.topicDescription
+    const { loading, run: postCollection } = useRequest(async (value: UpsertCollectionReqModel) => {
+        const request: UpsertCollectionReqModel = {
+            collectionName: value.collectionName,
+            description: value.description,
+            topicId: props.topicId
         }
-        const response = await topicApi.postTopic(request);
+        const response = await collectionApi.postCollection(request);
         if (response.isSuccess == true) {
             form.resetFields();
             setOpen(false);
@@ -42,8 +43,8 @@ const CreateTopic = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertTopicReqModel) => {
-        postTopic(values)
+    const handleSubmit = async (values: UpsertCollectionReqModel) => {
+        postCollection(values);
     };
 
     return (
@@ -53,7 +54,7 @@ const CreateTopic = (props: IProps) => {
             </Button>
             <Modal
                 open={open}
-                title={'Create new topic'}
+                title={'Create new collection'}
                 onCancel={handleClose}
                 footer={[
                     <Button key="back" onClick={handleClose}>
@@ -65,7 +66,7 @@ const CreateTopic = (props: IProps) => {
                     <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
                         <Form.Item
                             label="Name"
-                            name="topicName"
+                            name="collectionName"
                             rules={[{ required: true, message: 'Please input the name!' }]}
                         >
                             <Input />
@@ -73,7 +74,7 @@ const CreateTopic = (props: IProps) => {
 
                         <Form.Item
                             label="Description"
-                            name="topicDescription"
+                            name="description"
                             rules={[{ required: true, message: 'Please input the description!' }]}
                         >
                             <TextArea rows={4} />
@@ -92,4 +93,4 @@ const CreateTopic = (props: IProps) => {
     );
 };
 
-export default CreateTopic;
+export default CreateCollection

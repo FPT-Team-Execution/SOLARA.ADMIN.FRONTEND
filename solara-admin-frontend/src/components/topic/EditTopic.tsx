@@ -57,7 +57,7 @@ const EditTopic = (props: IProps) => {
 
     return (
         <>
-            <Button className={'bg-green-600'} type="primary" onClick={handleOpen}>
+            <Button type="default" onClick={handleOpen}>
                 <EditOutlined />
             </Button>
             <Modal

@@ -40,5 +40,5 @@ export type PageResModel = {
 
 export type PaginationResModel<TContent> = {
     content: TContent[],
-    page: PageReqModel
+    page: PageResModel
 }
