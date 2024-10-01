@@ -1,8 +1,11 @@
-import {useState} from "react";
-import {Button, Form, Input, Modal} from 'antd';
-import {PlusOutlined} from "@ant-design/icons";
+import { useState } from "react";
+import { Button, Form, Input, Modal } from 'antd';
+import { PlusOutlined } from "@ant-design/icons";
+import { UpsertTopicReqModel } from "../../types/topic.type";
+import { topicApi } from "../../utils/axios/topicApi";
+import { useRequest } from "ahooks";
 
-const {TextArea} = Input;
+const { TextArea } = Input;
 
 interface IProps {
     handleReloadTable: () => void
@@ -10,8 +13,26 @@ interface IProps {
 
 const AddNewCategory = (props: IProps) => {
     const [form] = Form.useForm();
-    const [submitLoading, setSubmitLoading] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
+
+    const { loading, run: postTopic } = useRequest(async (value : UpsertTopicReqModel) => {
+        const request : UpsertTopicReqModel = {
+            topicName: value.topicName,
+            topicDescription: value.topicDescription
+        }
+        const response = await topicApi.postTopic(request);
+        if (response.isSuccess == true) {
+            form.resetFields();
+            setOpen(false);
+            props.handleReloadTable();
+        }
+    }, {
+        manual: true,
+        onError: () => {
+        },
+        onSuccess: () => {
+        }
+    });
 
     const handleOpen = async () => {
         setOpen(true);
@@ -21,14 +42,14 @@ const AddNewCategory = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: any) => {
-        setSubmitLoading(true);
+    const handleSubmit = async (values: UpsertTopicReqModel) => {
+        postTopic(values)
     };
 
     return (
         <>
             <Button className={'bg-green-600'} type="primary" onClick={handleOpen}>
-                <PlusOutlined/> Create topic
+                <PlusOutlined /> Create topic
             </Button>
             <Modal
                 open={open}
@@ -44,22 +65,22 @@ const AddNewCategory = (props: IProps) => {
                     <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
                         <Form.Item
                             label="Name"
-                            name="name"
-                            rules={[{required: true, message: 'Please input the name!'}]}
+                            name="topicName"
+                            rules={[{ required: true, message: 'Please input the name!' }]}
                         >
-                            <Input/>
+                            <Input />
                         </Form.Item>
 
                         <Form.Item
                             label="Description"
-                            name="description"
-                            rules={[{required: true, message: 'Please input the description!'}]}
+                            name="topicDescription"
+                            rules={[{ required: true, message: 'Please input the description!' }]}
                         >
-                            <TextArea rows={4}/>
+                            <TextArea rows={4} />
                         </Form.Item>
 
                         <Form.Item>
-                            <Button loading={submitLoading} className={'bg-green-600'} type="primary" htmlType="submit">
+                            <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
                                 Create
                             </Button>
                         </Form.Item>

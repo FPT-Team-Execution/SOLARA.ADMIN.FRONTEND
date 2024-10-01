@@ -1,7 +1,11 @@
-export const noPermission = (): string => {
-    return "You have no permission!"
-}
-
-export const loginSuccess = (): string => {
-    return " Login into system successfully!"
+export const messageHelper = {
+    loginSuccess: (): string => {
+        return "Login into system successfully!"
+    },
+    noPermission: (): string => {
+        return "You have no permission!"
+    },
+    deleteSucess: (objectName: string): string => {
+        return `Delete ${objectName} successfully!`
+    }
 }
