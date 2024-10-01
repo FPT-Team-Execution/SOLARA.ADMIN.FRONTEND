@@ -4,9 +4,13 @@ import TextArea from "antd/es/input/TextArea"
 import { Form } from "antd"
 import { CollectionModel, UpsertCollectionReqModel } from "../../types/collection.type"
 import { useState } from "react"
+import { useRequest } from "ahooks"
+import { collectionApi } from "../../utils/axios/collectionApi"
 
 interface IProps {
-    collection: CollectionModel
+    topicId: string
+    collection: CollectionModel,
+    handleReloadTable: () => void
 }
 
 const EditCollection = (props: IProps) => {
@@ -21,9 +25,29 @@ const EditCollection = (props: IProps) => {
         })
     }
 
+    const { loading, run: putCollection } = useRequest(async (id: string, values: UpsertCollectionReqModel) => {
+        const request: UpsertCollectionReqModel = {
+            collectionName: values.collectionName,
+            description: values.description,
+            topicId: props.topicId
+        }
+        const response = await collectionApi.putCollection(id, request);
+        if (response.isSuccess == true) {
+            form.resetFields();
+            setOpen(false);
+            props.handleReloadTable();
+        }
+    }, {
+        manual: true,
+        onError: () => {
+        },
+        onSuccess: () => {
+        }
+    })
+
     const handleOpen = async () => {
-        setOpen(true);
         setInitialFormValues();
+        setOpen(true);
     };
 
     const handleClose = () => {
@@ -31,6 +55,7 @@ const EditCollection = (props: IProps) => {
     };
 
     const handleSubmit = async (values: UpsertCollectionReqModel) => {
+        putCollection(props.collection.collectionId, values)
     };
 
     return (
@@ -50,6 +75,7 @@ const EditCollection = (props: IProps) => {
             >
                 <div className={'flex w-full gap-2'}>
                     <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
+
                         <Form.Item
                             label="Name"
                             name="collectionName"
@@ -67,10 +93,11 @@ const EditCollection = (props: IProps) => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button className={'bg-green-600'} type="primary" htmlType="submit">
+                            <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
                                 Update
                             </Button>
                         </Form.Item>
+
                     </Form>
                 </div>
 

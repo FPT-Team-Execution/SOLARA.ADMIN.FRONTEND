@@ -8,7 +8,7 @@ interface ICollectionApi {
     getCollection: (id: string) => Promise<BaseReModel<CollectionModel>>;
     getOnTopic: (id: string, request: PageReqModel) => Promise<BaseReModel<PaginationResModel<CollectionModel>>>;
     postCollection: (request: UpsertCollectionReqModel) => Promise<BaseReModel<CollectionResModel>>;
-    putCollection: () => Promise<BaseReModel<CollectionResModel>>;
+    putCollection: (id: string, request: UpsertCollectionReqModel) => Promise<BaseReModel<CollectionResModel>>;
     deleteCollection: (id: string) => Promise<BaseModel>;
 }
 
@@ -29,12 +29,12 @@ export const collectionApi: ICollectionApi = {
         const response = await axiosClient.post<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(), request);
         return response.data;
     },
-    putCollection: async () => {
-        const response = await axiosClient.put<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL());
+    putCollection: async (id: string, request: UpsertCollectionReqModel) => {
+        const response = await axiosClient.put<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(id), request);
         return response.data;
     },
     deleteCollection: async (id: string) => {
-        const response = await axiosClient.get<BaseModel>(COLLECTION_URL.GET_POS_PUT_DEL(id));
+        const response = await axiosClient.delete<BaseModel>(COLLECTION_URL.GET_POS_PUT_DEL(id));
         return response.data;
     }
 }

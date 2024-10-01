@@ -61,8 +61,8 @@ const CollectionsTable = (props: IProps) => {
             render: (record: CollectionModel) => (
                 <Space size="small">
                     <ShowFlashcard collectionId={record.collectionId}></ShowFlashcard>
-                    <EditCollection collection={record}></EditCollection>
-                    <DeleteCollection></DeleteCollection>
+                    <EditCollection topicId={props.topicId} collection={record} handleReloadTable={refresh}></EditCollection>
+                    <DeleteCollection id={record.collectionId} handleReloadTable={refresh}></DeleteCollection>
                 </Space>
             ),
         },
@@ -71,7 +71,7 @@ const CollectionsTable = (props: IProps) => {
     return (
         <div>
             <div className="flex float-end space-x-2 p-4">
-                <CreateCollection topicId={props.topicId} handleReloadTable={() => { }} ></CreateCollection>
+                <CreateCollection topicId={props.topicId} handleReloadTable={refresh} ></CreateCollection>
             </div>
             <div>
                 <div className="flex space-x-8 p-4">
