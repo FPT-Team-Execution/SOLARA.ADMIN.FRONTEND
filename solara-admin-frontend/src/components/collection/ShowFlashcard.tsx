@@ -1,10 +1,21 @@
-import React from 'react'
+import { SettingOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
+import { Link } from 'react-router-dom'
+import { PATH_ADMIN } from '../../routes/path'
 
-const ShowFlashcard = () => {
+interface IProps {
+  collectionId: string;
+}
+
+const ShowFlashcard = (props: IProps) => {
   return (
-    <div>
-      
-    </div>
+    <>
+      <Link to={`${PATH_ADMIN.flashcard}?collectionId=${props.collectionId}`} >
+        <Button type="default">
+          <SettingOutlined />
+        </Button>
+      </Link >
+    </>
   )
 }
 

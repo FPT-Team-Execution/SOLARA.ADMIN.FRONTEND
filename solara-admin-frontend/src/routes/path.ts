@@ -1,10 +1,11 @@
-export const PATH_PUBLIC  = {
+export const PATH_PUBLIC = {
     home: '/',
 }
 
-export const PATH_ADMIN  = {
+export const PATH_ADMIN = {
     dashboard: '/dashboard',
     lesson: '/lesson',
     collection: '/collection',
+    flashcard: '/flashcard',
     user: '/user'
 }

@@ -4,6 +4,7 @@ import Dashboard from '../pages/dashboard'
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 import Lesson from "../pages/lesson";
 import Collection from "../pages/lesson/collection/collectionPage.tsx"
+import Flashcard from "../pages/lesson/flashcard/flashcardPage.tsx"
 import User from "../pages/user"
 import { PATH_ADMIN, PATH_PUBLIC } from "./path.ts";
 
@@ -44,6 +45,13 @@ export const Routes = createBrowserRouter([
                 element: <Collection />,
                 handle: {
                     crumb: () => 'Collection'
+                }
+            },
+            {
+                path: PATH_ADMIN.flashcard,
+                element: <Flashcard />,
+                handle: {
+                    crumb: () => 'Flashcard'
                 }
             },
             {

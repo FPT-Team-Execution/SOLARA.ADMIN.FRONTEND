@@ -9,6 +9,7 @@ import { shortenString } from "../../utils/funcs/stringHelpers"
 import { formatDateTime } from "../../utils/funcs/datetimeHelper"
 import DeleteCollection from "./DeleteCollection"
 import EditCollection from "./EditCollection"
+import ShowFlashcard from "./ShowFlashcard"
 
 interface IProps {
     topicId: string
@@ -59,7 +60,8 @@ const CollectionsTable = (props: IProps) => {
             key: 'action',
             render: (record: CollectionModel) => (
                 <Space size="small">
-                    <EditCollection></EditCollection>
+                    <ShowFlashcard collectionId={record.collectionId}></ShowFlashcard>
+                    <EditCollection collection={record}></EditCollection>
                     <DeleteCollection></DeleteCollection>
                 </Space>
             ),

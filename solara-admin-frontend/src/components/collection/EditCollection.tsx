@@ -2,15 +2,28 @@ import { EditOutlined } from "@ant-design/icons"
 import { Button, Modal, Input } from "antd"
 import TextArea from "antd/es/input/TextArea"
 import { Form } from "antd"
-import { UpsertCollectionReqModel } from "../../types/collection.type"
+import { CollectionModel, UpsertCollectionReqModel } from "../../types/collection.type"
 import { useState } from "react"
 
-const EditCollection = () => {
+interface IProps {
+    collection: CollectionModel
+}
+
+const EditCollection = (props: IProps) => {
     const [form] = Form.useForm<UpsertCollectionReqModel>();
     const [open, setOpen] = useState(false);
 
+    const setInitialFormValues = () => {
+        form.setFieldsValue({
+            collectionName: props.collection.collectionName!,
+            description: props.collection.description!,
+            topicId: props.collection.topicId
+        })
+    }
+
     const handleOpen = async () => {
         setOpen(true);
+        setInitialFormValues();
     };
 
     const handleClose = () => {
@@ -39,7 +52,7 @@ const EditCollection = () => {
                     <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
                         <Form.Item
                             label="Name"
-                            name="topicName"
+                            name="collectionName"
                             rules={[{ required: true, message: 'Please input the name!' }]}
                         >
                             <Input />
@@ -47,7 +60,7 @@ const EditCollection = () => {
 
                         <Form.Item
                             label="Description"
-                            name="topicDescription"
+                            name="description"
                             rules={[{ required: true, message: 'Please input the description!' }]}
                         >
                             <TextArea rows={4} />
