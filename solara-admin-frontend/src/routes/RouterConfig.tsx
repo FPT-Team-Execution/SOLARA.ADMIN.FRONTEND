@@ -2,9 +2,9 @@ import { Navigate, createBrowserRouter } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import Dashboard from '../pages/dashboard'
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
-import Lesson from "../pages/lesson";
-import Collection from "../pages/lesson/collection/collectionPage.tsx"
-import Flashcard from "../pages/lesson/flashcard/flashcardPage.tsx"
+import Topic from "../pages/topic/topicPage.tsx";
+import Collection from "../pages/topic/collection/collectionPage.tsx"
+import Flashcard from "../pages/topic/collection/flashcard/flashcardPage.tsx"
 import User from "../pages/user"
 import { PATH_ADMIN, PATH_PUBLIC } from "./path.ts";
 
@@ -34,10 +34,10 @@ export const Routes = createBrowserRouter([
                 }
             },
             {
-                path: PATH_ADMIN.lesson,
-                element: <Lesson />,
+                path: PATH_ADMIN.topic,
+                element: <Topic />,
                 handle: {
-                    crumb: () => 'Lesson'
+                    crumb: () => 'Topic'
                 }
             },
             {

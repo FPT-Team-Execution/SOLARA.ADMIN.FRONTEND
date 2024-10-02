@@ -11,7 +11,7 @@ const CollectionPage = () => {
 
     useEffect(() => {
         if (!topicId) { // Kiểm tra nếu topicId là null, undefined hoặc rỗng
-            navigate(PATH_ADMIN.lesson);
+            navigate(PATH_ADMIN.topic);
         }
     }, [topicId, navigate]);
 

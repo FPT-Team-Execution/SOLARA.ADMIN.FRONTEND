@@ -13,6 +13,7 @@ import type { MenuProps } from 'antd'
 import { Breadcrumb, ConfigProvider, Flex, FloatButton, Layout, Menu, theme } from 'antd'
 import { PropsWithChildren, useEffect, useState } from 'react'
 import { Link, RouteObject, useLocation, useMatches } from 'react-router-dom'
+import { PATH_ADMIN } from '../../routes/path.ts'
 
 
 const { Header, Content, Footer, Sider } = Layout
@@ -29,13 +30,13 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 }
 
 const items: MenuItem[] = [
-    getItem(<Link to='/'>Dashboard</Link>, '/dashboard', <AppstoreOutlined />),
-    getItem(<Link to='/lesson'>Lesson</Link>, '/lesson', <CodeSandboxOutlined />),
-    getItem(<Link to='/user'>User</Link>, '/user', <UserOutlined />),
+    getItem(<Link to={PATH_ADMIN.dashboard}>Dashboard</Link>, PATH_ADMIN.dashboard, <AppstoreOutlined />),
+    getItem(<Link to={PATH_ADMIN.topic}>Topic</Link>, PATH_ADMIN.topic, <CodeSandboxOutlined />),
+    getItem(<Link to={PATH_ADMIN.user}>User</Link>, PATH_ADMIN.user, <UserOutlined />),
 ]
 
 const BaseLayout = ({ children }: PropsWithChildren) => {
-    const [pathActive, setPathActive] = useState(['/dashboard'])
+    const [pathActive, setPathActive] = useState([PATH_ADMIN.dashboard])
     const location = useLocation()
 
     useEffect(() => {

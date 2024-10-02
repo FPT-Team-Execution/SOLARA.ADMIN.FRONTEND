@@ -1,17 +1,17 @@
 import BaseLayout from '../layouts/BaseLayout';
-import {Outlet, useNavigate} from "react-router-dom";
-import {useRequest} from "ahooks";
-import {useAuth, useClerk, useUser} from "@clerk/clerk-react";
-import {PATH_PUBLIC} from "./path.ts";
-import {notification} from "antd";
-import {messageHelper} from "../utils/funcs/messageHelper.ts";
-import {setJwtLocalStorage} from "../utils/localStorage/helper.ts";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useRequest } from "ahooks";
+import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
+import { PATH_PUBLIC } from "./path.ts";
+import { notification } from "antd";
+import { messageHelper } from "../utils/funcs/messageHelper.ts";
+import { setJwtLocalStorage } from "../utils/localStorage/helper.ts";
 import React from "react";
 
 export default function PrivateRoute(): React.JSX.Element {
-    const {user} = useUser();
-    const {getToken} = useAuth();
-    const {signOut} = useClerk();
+    const { user } = useUser();
+    const { getToken } = useAuth();
+    const { signOut } = useClerk();
     const navigate = useNavigate();
 
     useRequest(
@@ -27,7 +27,7 @@ export default function PrivateRoute(): React.JSX.Element {
                 return;
             }
 
-            const token: string | null = await getToken({template: 'Solara'});
+            const token: string | null = await getToken({ template: 'Solara' });
             setJwtLocalStorage(token)
 
             notification.success({
@@ -54,7 +54,7 @@ export default function PrivateRoute(): React.JSX.Element {
                     ?
                     (
                         <BaseLayout>
-                            <Outlet/>
+                            <Outlet />
                         </BaseLayout>
                     )
                     :
