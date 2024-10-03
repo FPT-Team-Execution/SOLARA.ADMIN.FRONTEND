@@ -5,7 +5,7 @@ import { useRequest } from "ahooks";
 import { topicApi } from "../../utils/axios/topicApi.ts";
 import { Button, Space, Table, TableProps } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
-import { shortenString } from "../../utils/funcs/stringHelpers.ts";
+// import { shortenString } from "../../utils/funcs/stringHelpers.ts";
 import DeleteTopic from "./DeleteTopic.tsx";
 import EditTopic from "./EditTopic.tsx";
 import { formatDateTime } from "../../utils/funcs/datetimeHelper.ts";
@@ -23,6 +23,15 @@ const TopicsTable = () => {
         pageSize: 100,
         sort: ""
     });
+
+    //
+    setQuery({
+        page: 1,
+        pageSize: 100,
+        sort: ""
+    })
+    console.log(page);
+    //
 
     const { loading, refresh } = useRequest(async () => {
         const response = await topicApi.getTopics(query);

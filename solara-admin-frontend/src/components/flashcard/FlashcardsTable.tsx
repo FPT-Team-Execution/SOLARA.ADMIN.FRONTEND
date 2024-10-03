@@ -3,7 +3,7 @@ import { useRequest } from "ahooks";
 import { TableProps, Button, Table, Space } from "antd";
 import { useState } from "react";
 import { PageResModel, PageReqModel } from "../../types/general.type";
-import { shortenString } from "../../utils/funcs/stringHelpers";
+// import { shortenString } from "../../utils/funcs/stringHelpers";
 import { FlashcardModel } from "../../types/flashcard.type";
 import { flashcardApi } from "../../utils/axios/flashcardApi";
 import FlashcardDetails from "./FlashcardDetails";
@@ -24,6 +24,15 @@ const FlashcardsTable = (props: IProps) => {
     pageSize: 100,
     sort: ""
   });
+
+  //
+  setQuery({
+    page: 1,
+    pageSize: 100,
+    sort: ""
+  })
+  console.log(page);
+  //
 
   const { loading, refresh } = useRequest(async () => {
     const response = await flashcardApi.getOnCollection(props.collectionId, query);

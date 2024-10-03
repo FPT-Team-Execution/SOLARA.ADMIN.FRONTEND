@@ -1,4 +1,4 @@
-import { Link, Navigate, createBrowserRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import Dashboard from '../pages/dashboard'
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'

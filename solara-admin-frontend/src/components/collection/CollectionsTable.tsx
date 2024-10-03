@@ -26,6 +26,15 @@ const CollectionsTable = (props: IProps) => {
         sort: ""
     });
 
+    //
+    setQuery({
+        page: 1,
+        pageSize: 100,
+        sort: ""
+    })
+    console.log(page);
+    //
+
     const { loading, refresh } = useRequest(async () => {
         const response = await collectionApi.getOnTopic(props.topicId, query);
         setCollections(response.responseRequest?.content);
