@@ -11,6 +11,7 @@ import DeleteCollection from "./DeleteCollection"
 import EditCollection from "./EditCollection"
 import ShowFlashcard from "./ShowFlashcard"
 import { ReloadOutlined } from "@ant-design/icons"
+import AppTableQuery from "../general/AppTableQuery"
 
 interface IProps {
     topicId: string
@@ -22,28 +23,24 @@ const CollectionsTable = (props: IProps) => {
     const [page, setPage] = useState<PageResModel>();
     const [query, setQuery] = useState<PageReqModel>({
         page: 1,
-        pageSize: 100,
+        pageSize: 10,
         sort: ""
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const ingoreEslint = () => {
-        setQuery({
-            page: 1,
-            pageSize: 100,
-            sort: ""
-        })
-        console.log(page);
-        //
-    }
-
+    const updateQuery = (key: keyof PageReqModel, value: string | number) => {
+        setQuery((prevQuery) => ({
+            ...prevQuery,
+            [key]: value,
+        }));
+    };
 
     const { loading, refresh } = useRequest(async () => {
-        ingoreEslint()
         const response = await collectionApi.getOnTopic(props.topicId, query);
         setCollections(response.responseRequest?.content);
         setPage(response.responseRequest?.page);
-    }, {})
+    }, {
+        refreshDeps: [query]
+    })
 
     const columns: TableProps<CollectionModel>['columns'] = [
         // {
@@ -89,14 +86,13 @@ const CollectionsTable = (props: IProps) => {
                 </Button>
                 <CreateCollection topicId={props.topicId} handleReloadTable={refresh} ></CreateCollection>
             </div>
+
+            <div className="flex float-start space-x-2 p-4">
+                <AppTableQuery page={page} query={query} updateQuery={updateQuery}></AppTableQuery>
+            </div>
+
             <div>
-                {/* <div className="flex space-x-8 p-4">
-                    <h1>Page Number: {page?.number}</h1>
-                    <h1>Page Size: {page?.size}</h1>
-                    <h1>Total Elements: {page?.totalElements}</h1>
-                    <h1>Total Pages: {page?.totalPages}</h1>
-                </div> */}
-                <Table loading={loading} className="shadow" dataSource={collections} columns={columns} />
+                <Table loading={loading} className="shadow" dataSource={collections} columns={columns} pagination={false} />
             </div>
         </div>
     )
