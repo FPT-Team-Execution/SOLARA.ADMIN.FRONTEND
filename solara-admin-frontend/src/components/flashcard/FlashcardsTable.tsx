@@ -27,6 +27,7 @@ const FlashcardsTable = (props: IProps) => {
 
   const { loading, refresh } = useRequest(async () => {
     const response = await flashcardApi.getOnCollection(props.collectionId, query);
+    setSelectedFlashcard(null)
     setFlashcards(response.responseRequest?.content)
     setPage(response.responseRequest?.page)
   }, {})

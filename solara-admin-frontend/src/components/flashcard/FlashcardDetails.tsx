@@ -15,7 +15,7 @@ const FlashcardDetails = (props: IProps) => {
                     props.flashcard != null ?
 
                         <Card.Meta
-                            title="Card title"
+                            title="Flashcard Details"
                             description={
                                 <>
                                     <p>{props.flashcard?.flashcardId}</p>
@@ -26,7 +26,7 @@ const FlashcardDetails = (props: IProps) => {
 
                                 </>
                             }
-                        /> : <>Please choose a flashcard</>
+                        /> : <>Please choose a flashcard!</>
                 }
             </Card>
         </>
