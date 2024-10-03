@@ -1,38 +1,13 @@
-import { useState } from "react";
-import { Button, Form, Input, Modal } from 'antd';
-import { PlusOutlined } from "@ant-design/icons";
-import { UpsertTopicReqModel } from "../../types/topic.type";
-import { topicApi } from "../../utils/axios/topicApi";
-import { useRequest } from "ahooks";
+import { EditOutlined } from '@ant-design/icons'
+import { Button, Modal, Input, Form } from 'antd'
+import TextArea from 'antd/es/input/TextArea'
+import { useState } from 'react'
+import { UpsertFlashcardReqModel } from '../../types/flashcard.type'
 
-const { TextArea } = Input;
+const EditFlashcard = () => {
 
-interface IProps {
-    handleReloadTable: () => void
-}
-
-const CreateTopic = (props: IProps) => {
-    const [form] = Form.useForm<UpsertTopicReqModel>();
+    const [form] = Form.useForm<UpsertFlashcardReqModel>();
     const [open, setOpen] = useState(false);
-
-    const { loading, run: postTopic } = useRequest(async (values: UpsertTopicReqModel) => {
-        const request: UpsertTopicReqModel = {
-            topicName: values.topicName,
-            topicDescription: values.topicDescription
-        }
-        const response = await topicApi.postTopic(request);
-        if (response.isSuccess == true) {
-            form.resetFields();
-            setOpen(false);
-            props.handleReloadTable();
-        }
-    }, {
-        manual: true,
-        onError: () => {
-        },
-        onSuccess: () => {
-        }
-    });
 
     const handleOpen = async () => {
         setOpen(true);
@@ -42,18 +17,16 @@ const CreateTopic = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertTopicReqModel) => {
-        postTopic(values)
+    const handleSubmit = async (values) => {
     };
 
     return (
         <>
-            <Button className={'bg-green-600'} type="primary" onClick={handleOpen} icon={<PlusOutlined />}>
-                Create
+            <Button type="default" onClick={handleOpen} icon={<EditOutlined />}>
             </Button>
             <Modal
                 open={open}
-                title={'Create new topic'}
+                title={'Edit topic'}
                 onCancel={handleClose}
                 footer={[
                     <Button key="back" onClick={handleClose}>
@@ -80,8 +53,8 @@ const CreateTopic = (props: IProps) => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
-                                Create
+                            <Button className={'bg-green-600'} type="primary" htmlType="submit">
+                                Update
                             </Button>
                         </Form.Item>
                     </Form>
@@ -89,7 +62,7 @@ const CreateTopic = (props: IProps) => {
 
             </Modal>
         </>
-    );
-};
+    )
+}
 
-export default CreateTopic;
+export default EditFlashcard

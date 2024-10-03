@@ -9,7 +9,7 @@ const FlashcardPage = () => {
   const collectionId = searchParams.get('collectionId');
 
   useEffect(() => {
-    if (!collectionId) { 
+    if (!collectionId) {
       navigate(PATH_ADMIN.collection);
     }
   }, [collectionId, navigate]);

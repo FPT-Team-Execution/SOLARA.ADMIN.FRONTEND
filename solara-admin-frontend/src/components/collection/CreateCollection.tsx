@@ -15,10 +15,10 @@ const CreateCollection = (props: IProps) => {
     const [form] = Form.useForm<UpsertCollectionReqModel>();
     const [open, setOpen] = useState(false);
 
-    const { loading, run: postCollection } = useRequest(async (value: UpsertCollectionReqModel) => {
+    const { loading, run: postCollection } = useRequest(async (values: UpsertCollectionReqModel) => {
         const request: UpsertCollectionReqModel = {
-            collectionName: value.collectionName,
-            description: value.description,
+            collectionName: values.collectionName,
+            description: values.description,
             topicId: props.topicId
         }
         const response = await collectionApi.postCollection(request);
