@@ -1,6 +1,6 @@
 import { ReloadOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { TableProps, Button, Table } from "antd";
+import { TableProps, Button, Table, Space } from "antd";
 import { useState } from "react";
 import { PageResModel, PageReqModel } from "../../types/general.type";
 import { shortenString } from "../../utils/funcs/stringHelpers";
@@ -8,6 +8,8 @@ import { FlashcardModel } from "../../types/flashcard.type";
 import { flashcardApi } from "../../utils/axios/flashcardApi";
 import FlashcardDetails from "./FlashcardDetails";
 import CreateFlashcard from "./CreateFlashcard";
+import DeleteFlashcard from "./DeleteFlashcard";
+import EditFlashcard from "./EditFlashcard";
 
 interface IProps {
   collectionId: string
@@ -40,6 +42,16 @@ const FlashcardsTable = (props: IProps) => {
       title: 'Question',
       dataIndex: 'question',
       key: 'question',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (record: FlashcardModel) => (
+        <Space size="small">
+          <EditFlashcard></EditFlashcard>
+          <DeleteFlashcard handleReloadTable={refresh} flashcardId={record.flashcardId}></DeleteFlashcard>
+        </Space>
+      ),
     },
   ];
 
