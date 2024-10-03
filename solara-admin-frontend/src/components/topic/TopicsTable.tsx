@@ -24,14 +24,16 @@ const TopicsTable = () => {
         sort: ""
     });
 
-    //
-    setQuery({
-        page: 1,
-        pageSize: 100,
-        sort: ""
-    })
-    console.log(page);
-    //
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const ingoreEslint = () => {
+        setQuery({
+            page: 1,
+            pageSize: 100,
+            sort: ""
+        })
+        console.log(page);
+        //
+    }
 
     const { loading, refresh } = useRequest(async () => {
         const response = await topicApi.getTopics(query);
