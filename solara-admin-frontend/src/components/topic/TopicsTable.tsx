@@ -36,6 +36,7 @@ const TopicsTable = () => {
     }
 
     const { loading, refresh } = useRequest(async () => {
+        ingoreEslint()
         const response = await topicApi.getTopics(query);
         setTopics(response.responseRequest?.content)
         setPage(response.responseRequest?.page)
