@@ -37,7 +37,9 @@ const CollectionsTable = (props: IProps) => {
         //
     }
 
+
     const { loading, refresh } = useRequest(async () => {
+        ingoreEslint()
         const response = await collectionApi.getOnTopic(props.topicId, query);
         setCollections(response.responseRequest?.content);
         setPage(response.responseRequest?.page);

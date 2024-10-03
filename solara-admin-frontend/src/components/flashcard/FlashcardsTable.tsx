@@ -37,6 +37,7 @@ const FlashcardsTable = (props: IProps) => {
   }
 
   const { loading, refresh } = useRequest(async () => {
+    ingoreEslint()
     const response = await flashcardApi.getOnCollection(props.collectionId, query);
     setSelectedFlashcard(null)
     setFlashcards(response.responseRequest?.content)
