@@ -95,17 +95,17 @@ const CreateFlashcard = (props: IProps) => {
             <Form.Item
               label="Image Url"
               name="imageUrl"
-              rules={[{ required: true, message: 'Please input the image url!' }]}
+              rules={[{ required: false, message: 'Please input the image url!' }]}
             >
-              <Input />
+              <TextArea rows={2} />
             </Form.Item>
 
             <Form.Item
               label="Video Url"
               name="videoUrl"
-              rules={[{ required: true, message: 'Please input the video url!' }]}
+              rules={[{ required: false, message: 'Please input the video url!' }]}
             >
-              <Input />
+              <TextArea rows={2} />
             </Form.Item>
 
             <Form.Item>

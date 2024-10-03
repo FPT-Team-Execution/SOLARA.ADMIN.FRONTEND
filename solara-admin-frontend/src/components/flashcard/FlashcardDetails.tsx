@@ -1,36 +1,48 @@
-import { Card } from "antd"
+import { Card } from "antd";
 import { FlashcardModel } from "../../types/flashcard.type";
+import ReactPlayer from "react-player";
 
 interface IProps {
-    flashcard: FlashcardModel | null
-    handleReloadTable: () => void
+    flashcard: FlashcardModel | null;
+    handleReloadTable: () => void;
 }
 
 const FlashcardDetails = (props: IProps) => {
-
     return (
         <>
-            <Card>
-                {
-                    props.flashcard != null ?
-
-                        <Card.Meta
-                            title="Flashcard Details"
-                            description={
-                                <>
-                                    <p>{props.flashcard?.flashcardId}</p>
-                                    <p>{props.flashcard?.question}</p>
-                                    <p>{props.flashcard?.answer}</p>
-                                    <p>{props.flashcard?.difficulty}</p>
-                                    <img src={props.flashcard.imageUrl!} alt="" />
-
-                                </>
-                            }
-                        /> : <>Please choose a flashcard!</>
-                }
+            <Card title="Flashcard Details" className="flex flex-col items-center justify-center">
+                {props.flashcard != null ? (
+                    <div className="space-y-4 flex flex-col items-center justify-center">
+                        <p className="text-lg font-semibold text-gray-700">
+                            {props.flashcard?.question}
+                        </p>
+                        <p className="text-md italic text-gray-600">
+                            {props.flashcard?.answer}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            Difficulty: {props.flashcard?.difficulty}
+                        </p>
+                        {props.flashcard.imageUrl?.trim() && (
+                            <img
+                                src={props.flashcard.imageUrl.trim()}
+                                alt="Flashcard"
+                                className="object-cover rounded-lg"
+                            />
+                        )}
+                        {props.flashcard.videoUrl?.trim() && (
+                            <div className="rounded-lg overflow-hidden">
+                                <ReactPlayer controls url={props.flashcard.videoUrl} />
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="text-center text-gray-500">
+                        Please choose a flashcard!
+                    </div>
+                )}
             </Card>
         </>
-    )
-}
+    );
+};
 
-export default FlashcardDetails
+export default FlashcardDetails;

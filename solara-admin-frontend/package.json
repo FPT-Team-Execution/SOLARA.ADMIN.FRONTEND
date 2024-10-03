@@ -15,9 +15,11 @@
     "ahooks": "^3.8.1",
     "antd": "^5.21.1",
     "axios": "^1.7.7",
+    "firebase": "^10.14.0",
     "query-string": "^9.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-player": "^2.16.0",
     "react-router-dom": "^6.26.2"
   },
   "devDependencies": {

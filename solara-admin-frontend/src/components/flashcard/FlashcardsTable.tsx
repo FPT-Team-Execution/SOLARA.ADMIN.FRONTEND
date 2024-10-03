@@ -21,7 +21,7 @@ const FlashcardsTable = (props: IProps) => {
   const [page, setPage] = useState<PageResModel>();
   const [query, setQuery] = useState<PageReqModel>({
     page: 1,
-    pageSize: 50,
+    pageSize: 100,
     sort: ""
   });
 
@@ -34,10 +34,10 @@ const FlashcardsTable = (props: IProps) => {
 
   const columns: TableProps<FlashcardModel>['columns'] = [
     {
-      title: 'Id',
-      dataIndex: 'flashcardId',
-      key: 'flashcardId',
-      render: (flashcardId) => shortenString(flashcardId)
+      title: 'No',
+      dataIndex: 'no',
+      key: 'no',
+      render: (_, __, index: number) => index + 1,
     },
     {
       title: 'Question',
@@ -49,7 +49,7 @@ const FlashcardsTable = (props: IProps) => {
       key: 'action',
       render: (record: FlashcardModel) => (
         <Space size="small">
-          <EditFlashcard></EditFlashcard>
+          <EditFlashcard handleReloadTable={refresh} flashcard={record}></EditFlashcard>
           <DeleteFlashcard handleReloadTable={refresh} flashcardId={record.flashcardId}></DeleteFlashcard>
         </Space>
       ),
@@ -72,12 +72,13 @@ const FlashcardsTable = (props: IProps) => {
         <CreateFlashcard collectionId={props.collectionId} handleReloadTable={refresh}></CreateFlashcard>
       </div>
       <div>
-        <div className="flex space-x-8 p-4">
+
+        {/* <div className="flex space-x-8 p-4">
           <h1>Page Number: {page?.number}</h1>
           <h1>Page Size: {page?.size}</h1>
           <h1>Total Elements: {page?.totalElements}</h1>
           <h1>Total Pages: {page?.totalPages}</h1>
-        </div>
+        </div> */}
 
         <div className='flex w-full space-x-4'>
           <div className='w-5/12'>

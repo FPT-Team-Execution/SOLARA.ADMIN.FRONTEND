@@ -20,7 +20,7 @@ const TopicsTable = () => {
     const [page, setPage] = useState<PageResModel>();
     const [query, setQuery] = useState<PageReqModel>({
         page: 1,
-        pageSize: 50,
+        pageSize: 100,
         sort: ""
     });
 
@@ -31,12 +31,12 @@ const TopicsTable = () => {
     }, {})
 
     const columns: TableProps<TopicModel>['columns'] = [
-        {
-            title: 'Id',
-            dataIndex: 'topicId',
-            key: 'topicId',
-            render: (topicId) => shortenString(topicId)
-        },
+        // {
+        //     title: 'Id',
+        //     dataIndex: 'topicId',
+        //     key: 'topicId',
+        //     render: (topicId) => shortenString(topicId)
+        // },
         {
             title: 'Name',
             dataIndex: 'topicName',
@@ -75,12 +75,12 @@ const TopicsTable = () => {
                 <CreateTopic handleReloadTable={refresh}></CreateTopic>
             </div>
             <div>
-                <div className="flex space-x-8 p-4">
+                {/* <div className="flex space-x-8 p-4">
                     <h1>Page Number: {page?.number}</h1>
                     <h1>Page Size: {page?.size}</h1>
                     <h1>Total Elements: {page?.totalElements}</h1>
                     <h1>Total Pages: {page?.totalPages}</h1>
-                </div>
+                </div> */}
                 <Table loading={loading} className="shadow" dataSource={topics} columns={columns} />
             </div>
         </div>

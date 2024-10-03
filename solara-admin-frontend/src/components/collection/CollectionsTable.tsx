@@ -5,7 +5,7 @@ import { PageReqModel, PageResModel } from "../../types/general.type"
 import { useRequest } from "ahooks"
 import { collectionApi } from "../../utils/axios/collectionApi"
 import { Button, Space, Table, TableProps } from "antd"
-import { shortenString } from "../../utils/funcs/stringHelpers"
+// import { shortenString } from "../../utils/funcs/stringHelpers"
 import { formatDateTime } from "../../utils/funcs/datetimeHelper"
 import DeleteCollection from "./DeleteCollection"
 import EditCollection from "./EditCollection"
@@ -22,7 +22,7 @@ const CollectionsTable = (props: IProps) => {
     const [page, setPage] = useState<PageResModel>();
     const [query, setQuery] = useState<PageReqModel>({
         page: 1,
-        pageSize: 50,
+        pageSize: 100,
         sort: ""
     });
 
@@ -33,12 +33,12 @@ const CollectionsTable = (props: IProps) => {
     }, {})
 
     const columns: TableProps<CollectionModel>['columns'] = [
-        {
-            title: 'Id',
-            dataIndex: 'collectionId',
-            key: 'collectionId',
-            render: (collectionId) => shortenString(collectionId)
-        },
+        // {
+        //     title: 'Id',
+        //     dataIndex: 'collectionId',
+        //     key: 'collectionId',
+        //     render: (collectionId) => shortenString(collectionId)
+        // },
         {
             title: 'Name',
             dataIndex: 'collectionName',
@@ -77,12 +77,12 @@ const CollectionsTable = (props: IProps) => {
                 <CreateCollection topicId={props.topicId} handleReloadTable={refresh} ></CreateCollection>
             </div>
             <div>
-                <div className="flex space-x-8 p-4">
+                {/* <div className="flex space-x-8 p-4">
                     <h1>Page Number: {page?.number}</h1>
                     <h1>Page Size: {page?.size}</h1>
                     <h1>Total Elements: {page?.totalElements}</h1>
                     <h1>Total Pages: {page?.totalPages}</h1>
-                </div>
+                </div> */}
                 <Table loading={loading} className="shadow" dataSource={collections} columns={columns} />
             </div>
         </div>

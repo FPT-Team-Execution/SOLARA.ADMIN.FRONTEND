@@ -8,7 +8,7 @@ interface IFlashcardApi {
     getFlashcard: (id: string) => Promise<BaseReModel<FlashcardModel>>;
     getOnCollection: (id: string, request: PageReqModel) => Promise<BaseReModel<PaginationResModel<FlashcardModel>>>;
     postFlashcard: (request: UpsertFlashcardReqModel) => Promise<BaseReModel<FlashcardResModel>>;
-    putFlashcard: () => Promise<BaseReModel<FlashcardResModel>>;
+    putFlashcard: (id: string, request: UpsertFlashcardReqModel) => Promise<BaseReModel<FlashcardResModel>>;
     deleteFlashcard: (id: string) => Promise<BaseModel>;
 }
 
@@ -29,8 +29,8 @@ export const flashcardApi: IFlashcardApi = {
         const response = await axiosClient.post<BaseReModel<FlashcardResModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(), request);
         return response.data;
     },
-    putFlashcard: async () => {
-        const response = await axiosClient.put<BaseReModel<FlashcardResModel>>(FLASHCARD_URL.GET_POS_PUT_DEL());
+    putFlashcard: async (id: string, request: UpsertFlashcardReqModel) => {
+        const response = await axiosClient.put<BaseReModel<FlashcardResModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(id), request);
         return response.data;
     },
     deleteFlashcard: async (id: string) => {

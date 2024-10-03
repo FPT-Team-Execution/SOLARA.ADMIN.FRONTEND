@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter } from 'react-router-dom'
+import { Link, Navigate, createBrowserRouter } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import Dashboard from '../pages/dashboard'
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
@@ -7,6 +7,8 @@ import Collection from "../pages/topic/collection/collectionPage.tsx"
 import Flashcard from "../pages/topic/collection/flashcard/flashcardPage.tsx"
 import User from "../pages/user"
 import { PATH_ADMIN, PATH_PUBLIC } from "./path.ts";
+import AppBreadcrumb from '../components/breadcrumb/AppBreadcrumb.tsx';
+import { HomeOutlined } from '@ant-design/icons';
 
 export const Routes = createBrowserRouter([
     {
@@ -37,21 +39,45 @@ export const Routes = createBrowserRouter([
                 path: PATH_ADMIN.topic,
                 element: <Topic />,
                 handle: {
-                    crumb: () => 'Topic'
+                    crumb: () => <AppBreadcrumb
+                        items={
+                            [
+                                { title: (<HomeOutlined />), link: PATH_ADMIN.dashboard },
+                                { title: 'Topic' }
+                            ]
+                        }
+                    />
                 }
             },
             {
                 path: PATH_ADMIN.collection,
                 element: <Collection />,
                 handle: {
-                    crumb: () => 'Collection'
+                    crumb: () => <AppBreadcrumb
+                        items={
+                            [
+                                { title: (<HomeOutlined />), link: PATH_ADMIN.dashboard },
+                                { title: 'Topic', link: PATH_ADMIN.topic },
+                                { title: 'Collection' }
+                            ]
+                        }
+                    />
                 }
             },
             {
                 path: PATH_ADMIN.flashcard,
                 element: <Flashcard />,
                 handle: {
-                    crumb: () => 'Flashcard'
+                    crumb: () => <AppBreadcrumb
+                        items={
+                            [
+                                { title: (<HomeOutlined />), link: PATH_ADMIN.dashboard },
+                                { title: 'Topic', link: PATH_ADMIN.topic },
+                                { title: 'Collection' },
+                                { title: 'Flashcard' }
+                            ]
+                        }
+                    />
                 }
             },
             {
