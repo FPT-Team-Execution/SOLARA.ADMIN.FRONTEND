@@ -10,6 +10,7 @@ import FlashcardDetails from "./FlashcardDetails";
 import CreateFlashcard from "./CreateFlashcard";
 import DeleteFlashcard from "./DeleteFlashcard";
 import EditFlashcard from "./EditFlashcard";
+import AppTableQuery from "../general/AppTableQuery";
 
 interface IProps {
   collectionId: string
@@ -21,16 +22,25 @@ const FlashcardsTable = (props: IProps) => {
   const [page, setPage] = useState<PageResModel>();
   const [query, setQuery] = useState<PageReqModel>({
     page: 1,
-    pageSize: 100,
+    pageSize: 10,
     sort: ""
   });
+
+  const updateQuery = (key: keyof PageReqModel, value: string | number) => {
+    setQuery((prevQuery) => ({
+      ...prevQuery,
+      [key]: value,
+    }));
+  };
 
   const { loading, refresh } = useRequest(async () => {
     const response = await flashcardApi.getOnCollection(props.collectionId, query);
     setSelectedFlashcard(null)
     setFlashcards(response.responseRequest?.content)
     setPage(response.responseRequest?.page)
-  }, {})
+  }, {
+    refreshDeps: [query]
+  })
 
   const columns: TableProps<FlashcardModel>['columns'] = [
     {
@@ -71,15 +81,12 @@ const FlashcardsTable = (props: IProps) => {
         </Button>
         <CreateFlashcard collectionId={props.collectionId} handleReloadTable={refresh}></CreateFlashcard>
       </div>
+
+      <div className="flex float-start space-x-2 p-4">
+        <AppTableQuery page={page} query={query} updateQuery={updateQuery}></AppTableQuery>
+      </div>
+
       <div>
-
-        {/* <div className="flex space-x-8 p-4">
-          <h1>Page Number: {page?.number}</h1>
-          <h1>Page Size: {page?.size}</h1>
-          <h1>Total Elements: {page?.totalElements}</h1>
-          <h1>Total Pages: {page?.totalPages}</h1>
-        </div> */}
-
         <div className='flex w-full space-x-4'>
           <div className='w-5/12'>
             <Table
@@ -87,6 +94,7 @@ const FlashcardsTable = (props: IProps) => {
               className="shadow"
               dataSource={flashcards}
               columns={columns}
+              pagination={false}
               onRow={(record) => ({
                 onClick: () => handleRowClick(record),
                 style: { cursor: 'pointer' }

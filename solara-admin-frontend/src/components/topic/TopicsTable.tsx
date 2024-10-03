@@ -11,6 +11,7 @@ import EditTopic from "./EditTopic.tsx";
 import { formatDateTime } from "../../utils/funcs/datetimeHelper.ts";
 import CreateTopic from "./CreateTopic.tsx";
 import ShowCollection from "./ShowCollection.tsx";
+import AppTableQuery from "../general/AppTableQuery.tsx";
 
 
 
@@ -20,15 +21,24 @@ const TopicsTable = () => {
     const [page, setPage] = useState<PageResModel>();
     const [query, setQuery] = useState<PageReqModel>({
         page: 1,
-        pageSize: 100,
+        pageSize: 10,
         sort: ""
     });
+
+    const updateQuery = (key: keyof PageReqModel, value: string | number) => {
+        setQuery((prevQuery) => ({
+            ...prevQuery,
+            [key]: value,
+        }));
+    };
 
     const { loading, refresh } = useRequest(async () => {
         const response = await topicApi.getTopics(query);
         setTopics(response.responseRequest?.content)
         setPage(response.responseRequest?.page)
-    }, {})
+    }, {
+        refreshDeps: [query]
+    })
 
     const columns: TableProps<TopicModel>['columns'] = [
         // {
@@ -68,21 +78,22 @@ const TopicsTable = () => {
 
     return (
         <div>
+
             <div className="flex float-end space-x-2 p-4">
                 <Button type="dashed" onClick={refresh} icon={<ReloadOutlined />}>
                     Reload
                 </Button>
                 <CreateTopic handleReloadTable={refresh}></CreateTopic>
             </div>
-            <div>
-                {/* <div className="flex space-x-8 p-4">
-                    <h1>Page Number: {page?.number}</h1>
-                    <h1>Page Size: {page?.size}</h1>
-                    <h1>Total Elements: {page?.totalElements}</h1>
-                    <h1>Total Pages: {page?.totalPages}</h1>
-                </div> */}
-                <Table loading={loading} className="shadow" dataSource={topics} columns={columns} />
+
+            <div className="flex float-start space-x-2 p-4">
+                <AppTableQuery page={page} query={query} updateQuery={updateQuery}></AppTableQuery>
             </div>
+
+            <div>
+                <Table loading={loading} className="shadow" dataSource={topics} columns={columns} pagination={false} />
+            </div>
+
         </div>
     );
 };

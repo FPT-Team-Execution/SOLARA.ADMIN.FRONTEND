@@ -7,7 +7,7 @@ import Collection from "../pages/topic/collection/collectionPage.tsx"
 import Flashcard from "../pages/topic/collection/flashcard/flashcardPage.tsx"
 import User from "../pages/user"
 import { PATH_ADMIN, PATH_PUBLIC } from "./path.ts";
-import AppBreadcrumb from '../components/breadcrumb/AppBreadcrumb.tsx';
+import AppBreadcrumb from '../components/general/AppBreadcrumb.tsx';
 import { HomeOutlined } from '@ant-design/icons';
 
 export const Routes = createBrowserRouter([
