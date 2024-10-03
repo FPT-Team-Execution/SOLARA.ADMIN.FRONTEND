@@ -26,20 +26,7 @@ const CollectionsTable = (props: IProps) => {
         sort: ""
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const ingoreEslint = () => {
-        setQuery({
-            page: 1,
-            pageSize: 100,
-            sort: ""
-        })
-        console.log(page);
-        //
-    }
-
-
     const { loading, refresh } = useRequest(async () => {
-        ingoreEslint()
         const response = await collectionApi.getOnTopic(props.topicId, query);
         setCollections(response.responseRequest?.content);
         setPage(response.responseRequest?.page);

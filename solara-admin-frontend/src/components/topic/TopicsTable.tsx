@@ -24,19 +24,7 @@ const TopicsTable = () => {
         sort: ""
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const ingoreEslint = () => {
-        setQuery({
-            page: 1,
-            pageSize: 100,
-            sort: ""
-        })
-        console.log(page);
-        //
-    }
-
     const { loading, refresh } = useRequest(async () => {
-        ingoreEslint() 
         const response = await topicApi.getTopics(query);
         setTopics(response.responseRequest?.content)
         setPage(response.responseRequest?.page)

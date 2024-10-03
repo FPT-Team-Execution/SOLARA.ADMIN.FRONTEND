@@ -25,19 +25,7 @@ const FlashcardsTable = (props: IProps) => {
     sort: ""
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const ingoreEslint = () => {
-    setQuery({
-      page: 1,
-      pageSize: 100,
-      sort: ""
-    })
-    console.log(page);
-    //
-  }
-
   const { loading, refresh } = useRequest(async () => {
-    ingoreEslint()
     const response = await flashcardApi.getOnCollection(props.collectionId, query);
     setSelectedFlashcard(null)
     setFlashcards(response.responseRequest?.content)
