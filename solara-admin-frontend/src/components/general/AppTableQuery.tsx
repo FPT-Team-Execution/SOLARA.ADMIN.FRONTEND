@@ -1,15 +1,16 @@
 import { Row, Col, Button, Input, Typography, Select } from 'antd';
-import { PageReqModel, PageResModel } from '../../types/general.type';
+import { IPageRequest, IPaginate } from '../../types/general.type';
+// import { TopicDto } from '../../types/topic.type';
 const { Option } = Select;
 const { Text } = Typography;
 
-interface IProps {
-    query: PageReqModel;
-    page: PageResModel | undefined
-    updateQuery: (key: keyof PageReqModel, value: string | number) => void;
+interface IProps<T> {
+    query: IPageRequest;
+    page: IPaginate<T> | undefined;
+    updateQuery: (key: keyof IPageRequest, value: string | number) => void;
 }
 
-const AppTableQuery = (props: IProps) => {
+const AppTableQuery = (props: IProps<unknown>) => {
     const { page, query, updateQuery } = props;
 
     return (
@@ -20,8 +21,8 @@ const AppTableQuery = (props: IProps) => {
                 <Text strong>Sort By:</Text>
                 <Input
                     type="text"
-                    value={query.sort}
-                    onChange={(e) => updateQuery('sort', e.target.value)}
+                    value={query.orderOn}
+                    onChange={(e) => updateQuery('orderOn', e.target.value)}
                 />
             </Col>
 
@@ -29,8 +30,8 @@ const AppTableQuery = (props: IProps) => {
             <Col className="flex flex-col">
                 <Text strong>Page Size:</Text>
                 <Select
-                    value={query.pageSize}
-                    onChange={(value) => updateQuery('pageSize', value as number)}
+                    value={query.size}
+                    onChange={(value) => updateQuery('size', value as number)}
                 >
                     <Option value={10}>10</Option>
                     <Option value={25}>25</Option>
@@ -71,7 +72,7 @@ const AppTableQuery = (props: IProps) => {
                 <div>
                     <Input
                         className='w-12 text-center'
-                        value={page?.totalElements}
+                        value={page?.total}
                         readOnly
                     />
                 </div>

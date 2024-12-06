@@ -1,19 +1,19 @@
-import { PageReqModel } from "../../types/general.type.ts";
+import { IPageRequest } from "../../types/general.type.ts";
 
 export const FLASHCARD_URL = {
-    GET_ON_COLLECTION: (id: string, query: PageReqModel) => {
-        return `/flashcards/collection/${id}?page=${query?.page}&pageSize=${query?.pageSize}&sort=${query?.sort}`;
+    GET_ON_COLLECTION: (id: string, query: IPageRequest) => {
+        return `/exercises/sub-topic/${id}?page=${query?.page}&Size=${query?.size}&sort=${query?.orderOn}`;
     },
-    GETS: (query: PageReqModel) => {
-        return `/flashcards?page=${query?.page}&pageSize=${query?.pageSize}&sort=${query?.sort}`
+    GETS: (query: IPageRequest) => {
+        return `/exercises?page=${query?.page}&Size=${query?.size}&sort=${query?.orderOn}`
     },
     GET_POS_PUT_DEL: (id?: string | undefined) => {
         if (id !== undefined) {
-            return `/flashcards/${id}`;
+            return `/exercises/${id}`;
         }
-        return '/flashcards';
+        return '/exercises';
     },
     DELS: () => {
-        return '/flashcards/flashcard/bulk'
+        return '/exercises/bulk'
     }
 }

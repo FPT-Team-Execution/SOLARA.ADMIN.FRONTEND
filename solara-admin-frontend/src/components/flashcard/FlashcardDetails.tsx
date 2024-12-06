@@ -1,9 +1,8 @@
 import { Card } from "antd";
-import { FlashcardModel } from "../../types/flashcard.type";
 import ReactPlayer from "react-player";
-
+import { ExerciseDto } from "../../types/exercise";
 interface IProps {
-    flashcard: FlashcardModel | null;
+    flashcard: ExerciseDto | null;
     handleReloadTable: () => void;
 }
 
@@ -16,9 +15,9 @@ const FlashcardDetails = (props: IProps) => {
                         <p className="text-lg font-semibold text-gray-700">
                             {props.flashcard?.question}
                         </p>
-                        <p className="text-md italic text-gray-600">
-                            {props.flashcard?.answer}
-                        </p>
+                        {/* <p className="text-md italic text-gray-600">
+                            {props.flashcard?.ans}
+                        </p> */}
                         <p className="text-sm text-gray-500">
                             Difficulty: {props.flashcard?.difficulty}
                         </p>

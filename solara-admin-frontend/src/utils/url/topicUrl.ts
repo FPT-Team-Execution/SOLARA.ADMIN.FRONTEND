@@ -1,8 +1,8 @@
-import {PageReqModel} from "../../types/general.type.ts";
+import {IPageRequest} from "../../types/general.type.ts";
 
 export const TOPIC_URL = {
-    GETS: (query: PageReqModel) => {
-        return `/topics?page=${query?.page}&pageSize=${query?.pageSize}&sort=${query?.sort}`
+    GETS: (query: IPageRequest) => {
+        return `/topics?page=${query?.page}&Size=${query?.size}&sort=${query?.orderOn}`
     },
     GET_POS_PUT_DEL: (id?: string | undefined) => {
         if (id !== undefined) {

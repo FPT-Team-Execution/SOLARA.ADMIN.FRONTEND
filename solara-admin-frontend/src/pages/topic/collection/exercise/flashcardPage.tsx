@@ -9,8 +9,9 @@ const FlashcardPage = () => {
   const collectionId = searchParams.get('collectionId');
 
   useEffect(() => {
+    console.log(collectionId);
     if (!collectionId) {
-      navigate(PATH_ADMIN.collection);
+      navigate(PATH_ADMIN.exercise);
     }
   }, [collectionId, navigate]);
 

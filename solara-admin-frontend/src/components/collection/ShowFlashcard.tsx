@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom'
 import { PATH_ADMIN } from '../../routes/path'
 
 interface IProps {
-  collectionId: string;
+  id: string;
 }
 
 const ShowFlashcard = (props: IProps) => {
   return (
     <>
-      <Link to={`${PATH_ADMIN.flashcard}?collectionId=${props.collectionId}`} >
+      <Link to={`${PATH_ADMIN.exercise}?collectionId=${props.id}`} >
         <Button type="default" icon={<FolderOpenOutlined />}>
         </Button>
       </Link >

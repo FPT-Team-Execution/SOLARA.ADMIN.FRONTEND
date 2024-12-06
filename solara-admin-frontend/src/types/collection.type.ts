@@ -7,7 +7,7 @@ export type CollectionModel = {
 }
 
 export type CollectionResModel = {
-    collection: CollectionModel
+    collections: CollectionModel
 }
 
 export type UpsertCollectionReqModel = {

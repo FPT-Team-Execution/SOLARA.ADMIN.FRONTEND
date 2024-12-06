@@ -1,5 +1,5 @@
 import { Button, Form, Input, Modal } from "antd";
-import { UpsertCollectionReqModel } from "../../types/collection.type";
+import { UpdateSubTopicRequest } from "../../types/subTopic";
 import { useState } from "react";
 import { useRequest } from "ahooks";
 import TextArea from "antd/es/input/TextArea";
@@ -12,14 +12,16 @@ interface IProps {
 }
 
 const CreateCollection = (props: IProps) => {
-    const [form] = Form.useForm<UpsertCollectionReqModel>();
+    const [form] = Form.useForm<UpdateSubTopicRequest>();
     const [open, setOpen] = useState(false);
 
-    const { loading, run: postCollection } = useRequest(async (values: UpsertCollectionReqModel) => {
-        const request: UpsertCollectionReqModel = {
-            collectionName: values.collectionName,
+    const { loading, run: postCollection } = useRequest(async (values: UpdateSubTopicRequest) => {
+        console.log("===", values);
+        const request: UpdateSubTopicRequest = {
+            name: values.name,
             description: values.description,
-            topicId: props.topicId
+            topicId: props.topicId,
+            subTopicId: values.subTopicId
         }
         const response = await collectionApi.postCollection(request);
         if (response.isSuccess == true) {
@@ -43,7 +45,7 @@ const CreateCollection = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertCollectionReqModel) => {
+    const handleSubmit = async (values: UpdateSubTopicRequest) => {
         postCollection(values);
     };
 
@@ -66,7 +68,7 @@ const CreateCollection = (props: IProps) => {
                     <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
                         <Form.Item
                             label="Name"
-                            name="collectionName"
+                            name="name"
                             rules={[{ required: true, message: 'Please input the name!' }]}
                         >
                             <Input />

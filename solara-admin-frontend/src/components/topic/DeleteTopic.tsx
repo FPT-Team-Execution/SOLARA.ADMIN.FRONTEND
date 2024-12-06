@@ -1,4 +1,4 @@
-import { Button, Popconfirm } from 'antd'
+import { Button, Popconfirm, message } from 'antd';
 import { DeleteOutlined } from "@ant-design/icons";
 import { useRequest } from 'ahooks';
 import { topicApi } from '../../utils/axios/topicApi';
@@ -11,20 +11,23 @@ interface IProps {
 const DeleteTopic = (props: IProps) => {
 
     const { loading, run: deleteTopic } = useRequest(async () => {
-        const response = await topicApi.deleteTopic(props.id)
-        if (response.isSuccess == true) {
-            props.handleReloadTable()
+        const response = await topicApi.deleteTopic(props.id);
+        if (response.isSuccess) {
+            // message.success('Topic deleted successfully!');
+            props.handleReloadTable();
+        } else {
+            message.error('Failed to delete topic!');
+            // props.handleReloadTable(); //DELETE AFTER
         }
     }, {
         manual: true
-    })
+    });
 
     return (
         <Popconfirm
             title="Confirmation"
             description="Are you sure to delete?"
             onConfirm={() => deleteTopic()}
-
         >
             <Button
                 loading={loading}
@@ -34,8 +37,7 @@ const DeleteTopic = (props: IProps) => {
             >
             </Button>
         </Popconfirm>
-
     )
 }
 
-export default DeleteTopic
+export default DeleteTopic;

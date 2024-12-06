@@ -1,19 +1,22 @@
-// api/axiosClient.js
-import {notification} from 'antd'
+import { BASE_API } from '../../constants/apis'
+import { notification } from 'antd'
 import axios from 'axios'
-import queryString from 'query-string'
-import {BASE_URL} from "../url/baseUrl.ts";
+import { getCookie } from 'cookies-next'
 
 const axiosClient = axios.create({
-    baseURL: BASE_URL,
+    baseURL: BASE_API,
     headers: {
         'content-type': 'application/json'
     },
-    paramsSerializer: (params) => queryString.stringify(params),
-    timeout: 10 * 1000
+    timeout: 300000,
+    timeoutErrorMessage: `Connection is timeout exceeded`
 })
 
 axiosClient.interceptors.request.use(async (config) => {
+    const token = getCookie('__session'); 
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`; 
+    }
     return config
 })
 

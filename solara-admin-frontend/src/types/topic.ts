@@ -9,10 +9,6 @@ export type TopicDto = {
     updatedOn?: Date | null;
 }
 
-export type TopicResModel = {
-    topic: TopicDto;
-}
-
 export type GetPagedTopicsRequest = IPageRequest & {
 
 }

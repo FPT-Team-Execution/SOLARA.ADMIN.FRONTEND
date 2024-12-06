@@ -2,34 +2,37 @@ import { EditOutlined } from "@ant-design/icons"
 import { Button, Modal, Input } from "antd"
 import TextArea from "antd/es/input/TextArea"
 import { Form } from "antd"
-import { CollectionModel, UpsertCollectionReqModel } from "../../types/collection.type"
+import { SubTopicDto, UpdateSubTopicRequest } from "../../types/subTopic"
+
 import { useState } from "react"
 import { useRequest } from "ahooks"
 import { collectionApi } from "../../utils/axios/collectionApi"
 
 interface IProps {
     topicId: string
-    collection: CollectionModel,
+    collection: SubTopicDto,
     handleReloadTable: () => void
 }
 
 const EditCollection = (props: IProps) => {
-    const [form] = Form.useForm<UpsertCollectionReqModel>();
+    const [form] = Form.useForm<UpdateSubTopicRequest>();
     const [open, setOpen] = useState(false);
 
     const setInitialFormValues = () => {
         form.setFieldsValue({
-            collectionName: props.collection.collectionName!,
+            name: props.collection.name!,
             description: props.collection.description!,
-            topicId: props.collection.topicId
+            topicId: props.collection.id
         })
     }
 
-    const { loading, run: putCollection } = useRequest(async (id: string, values: UpsertCollectionReqModel) => {
-        const request: UpsertCollectionReqModel = {
-            collectionName: values.collectionName,
+    const { loading, run: putCollection } = useRequest(async (id: string, values: UpdateSubTopicRequest) => {
+        
+        const request: UpdateSubTopicRequest = {
+            name: values.name,
             description: values.description,
-            topicId: props.topicId
+            topicId: props.topicId,
+            subTopicId: props.collection.id //UPDATE SUBTOPIC LATER
         }
         const response = await collectionApi.putCollection(id, request);
         if (response.isSuccess == true) {
@@ -54,8 +57,8 @@ const EditCollection = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertCollectionReqModel) => {
-        putCollection(props.collection.collectionId, values)
+    const handleSubmit = async (values: UpdateSubTopicRequest) => {
+        putCollection(props.collection.id, values)
     };
 
     return (
@@ -77,7 +80,7 @@ const EditCollection = (props: IProps) => {
 
                         <Form.Item
                             label="Name"
-                            name="collectionName"
+                            name="name"
                             rules={[{ required: true, message: 'Please input the name!' }]}
                         >
                             <Input />

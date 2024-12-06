@@ -2,31 +2,29 @@ import { ReloadOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { TableProps, Button, Table, Space } from "antd";
 import { useState } from "react";
-import { PageResModel, PageReqModel } from "../../types/general.type";
-// import { shortenString } from "../../utils/funcs/stringHelpers";
-import { FlashcardModel } from "../../types/flashcard.type";
+import { IPaginate, IPageRequest } from "../../types/general.type";
 import { flashcardApi } from "../../utils/axios/flashcardApi";
 import FlashcardDetails from "./FlashcardDetails";
 import CreateFlashcard from "./CreateFlashcard";
 import DeleteFlashcard from "./DeleteFlashcard";
-import EditFlashcard from "./EditFlashcard";
+// import EditFlashcard from "./EditFlashcard";
 import AppTableQuery from "../general/AppTableQuery";
-
+import {ExerciseDto} from "../../types/exercise";
 interface IProps {
   collectionId: string
 }
 
 const FlashcardsTable = (props: IProps) => {
-  const [flashcards, setFlashcards] = useState<FlashcardModel[] | undefined>([])
-  const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardModel | null>(null);
-  const [page, setPage] = useState<PageResModel>();
-  const [query, setQuery] = useState<PageReqModel>({
+  const [flashcards, setFlashcards] = useState<ExerciseDto[] | undefined>([])
+  const [selectedFlashcard, setSelectedFlashcard] = useState<ExerciseDto | null>(null);
+  const [page, setPage] = useState<IPaginate<ExerciseDto>>();
+  const [query, setQuery] = useState<IPageRequest>({
     page: 1,
-    pageSize: 10,
-    sort: ""
+    size: 10,
+    isAscending: false
   });
 
-  const updateQuery = (key: keyof PageReqModel, value: string | number) => {
+  const updateQuery = (key: keyof IPageRequest, value: string | number) => {
     setQuery((prevQuery) => ({
       ...prevQuery,
       [key]: value,
@@ -35,14 +33,15 @@ const FlashcardsTable = (props: IProps) => {
 
   const { loading, refresh } = useRequest(async () => {
     const response = await flashcardApi.getOnCollection(props.collectionId, query);
+    console.log("XXX");
     setSelectedFlashcard(null)
-    setFlashcards(response.responseRequest?.content)
-    setPage(response.responseRequest?.page)
+    setFlashcards(response.responseRequest?.items)
+    setPage(response.responseRequest)
   }, {
     refreshDeps: [query]
   })
 
-  const columns: TableProps<FlashcardModel>['columns'] = [
+  const columns: TableProps<ExerciseDto>['columns'] = [
     {
       title: 'No',
       dataIndex: 'no',
@@ -57,10 +56,10 @@ const FlashcardsTable = (props: IProps) => {
     {
       title: 'Action',
       key: 'action',
-      render: (record: FlashcardModel) => (
+      render: (record: ExerciseDto) => (
         <Space size="small">
-          <EditFlashcard handleReloadTable={refresh} flashcard={record}></EditFlashcard>
-          <DeleteFlashcard handleReloadTable={refresh} flashcardId={record.flashcardId}></DeleteFlashcard>
+          {/* <EditFlashcard handleReloadTable={refresh} flashcard={record}></EditFlashcard> */}
+          <DeleteFlashcard handleReloadTable={refresh} flashcardId={record.id}></DeleteFlashcard>
         </Space>
       ),
     },
@@ -69,7 +68,7 @@ const FlashcardsTable = (props: IProps) => {
   // Row selection configuration
 
   // Handle row click
-  const handleRowClick = (record: FlashcardModel) => {
+  const handleRowClick = (record: ExerciseDto) => {
     setSelectedFlashcard(record); // Set the selected flashcard to display details
   };
 

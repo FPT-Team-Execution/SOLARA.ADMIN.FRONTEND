@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Form, Input, Modal } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
-import { UpsertTopicReqModel } from "../../types/topic.type";
+import { CreateTopicRequest } from "../../types/topic.type";
 import { topicApi } from "../../utils/axios/topicApi";
 import { useRequest } from "ahooks";
 
@@ -12,13 +12,14 @@ interface IProps {
 }
 
 const CreateTopic = (props: IProps) => {
-    const [form] = Form.useForm<UpsertTopicReqModel>();
+    const [form] = Form.useForm<CreateTopicRequest>();
     const [open, setOpen] = useState(false);
 
-    const { loading, run: postTopic } = useRequest(async (values: UpsertTopicReqModel) => {
-        const request: UpsertTopicReqModel = {
+    const { loading, run: postTopic } = useRequest(async (values: CreateTopicRequest) => {
+        const request: CreateTopicRequest = {
             topicName: values.topicName,
-            topicDescription: values.topicDescription
+            topicDescription: values.topicDescription,
+            totalSubTopic: values.totalSubTopic
         }
         const response = await topicApi.postTopic(request);
         if (response.isSuccess == true) {
@@ -42,7 +43,7 @@ const CreateTopic = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertTopicReqModel) => {
+    const handleSubmit = async (values: CreateTopicRequest) => {
         postTopic(values)
     };
 

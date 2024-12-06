@@ -1,7 +1,6 @@
 import { useState } from "react"
 import CreateCollection from "./CreateCollection"
-import { CollectionModel } from "../../types/collection.type"
-import { PageReqModel, PageResModel } from "../../types/general.type"
+import { IPageRequest, IPaginate } from "../../types/general.type"
 import { useRequest } from "ahooks"
 import { collectionApi } from "../../utils/axios/collectionApi"
 import { Button, Space, Table, TableProps } from "antd"
@@ -12,22 +11,23 @@ import EditCollection from "./EditCollection"
 import ShowFlashcard from "./ShowFlashcard"
 import { ReloadOutlined } from "@ant-design/icons"
 import AppTableQuery from "../general/AppTableQuery"
+import { SubTopicDto } from "../../types/subTopic"
 
 interface IProps {
-    topicId: string
+    topicId: string,
 }
 
 const CollectionsTable = (props: IProps) => {
 
-    const [collections, setCollections] = useState<CollectionModel[] | undefined>([]);
-    const [page, setPage] = useState<PageResModel>();
-    const [query, setQuery] = useState<PageReqModel>({
+    const [collections, setCollections] = useState<SubTopicDto[] | undefined>([]);
+    const [page, setPage] = useState<IPaginate<SubTopicDto>>();
+    const [query, setQuery] = useState<IPageRequest>({
         page: 1,
-        pageSize: 10,
-        sort: ""
+        size: 10,
+        isAscending: false,
     });
 
-    const updateQuery = (key: keyof PageReqModel, value: string | number) => {
+    const updateQuery = (key: keyof IPageRequest, value: string | number) => {
         setQuery((prevQuery) => ({
             ...prevQuery,
             [key]: value,
@@ -36,24 +36,24 @@ const CollectionsTable = (props: IProps) => {
 
     const { loading, refresh } = useRequest(async () => {
         const response = await collectionApi.getOnTopic(props.topicId, query);
-        setCollections(response.responseRequest?.content);
-        setPage(response.responseRequest?.page);
+        setCollections(response.responseRequest?.items);
+        setPage(response.responseRequest);
     }, {
         refreshDeps: [query]
     })
 
-    const columns: TableProps<CollectionModel>['columns'] = [
+    const columns: TableProps<SubTopicDto>['columns'] = [
         // {
         //     title: 'Id',
         //     dataIndex: 'collectionId',
         //     key: 'collectionId',
         //     render: (collectionId) => shortenString(collectionId)
         // },
-        {
-            title: 'Name',
-            dataIndex: 'collectionName',
-            key: 'collectionName',
-        },
+        // {
+        //     title: 'Name',
+        //     dataIndex: 'collectionName',
+        //     key: 'collectionName',
+        // },
         {
             title: 'Description',
             dataIndex: 'description',
@@ -61,18 +61,18 @@ const CollectionsTable = (props: IProps) => {
         },
         {
             title: 'Created At',
-            dataIndex: 'createAt',
-            key: 'createAt',
+            dataIndex: 'createdOn',
+            key: 'createdOn',
             render: (datetime) => formatDateTime(datetime)
         },
         {
             title: 'Action',
             key: 'action',
-            render: (record: CollectionModel) => (
+            render: (record: SubTopicDto) => (
                 <Space size="small">
-                    <ShowFlashcard collectionId={record.collectionId}></ShowFlashcard>
+                    <ShowFlashcard id={record.id}></ShowFlashcard>
                     <EditCollection topicId={props.topicId} collection={record} handleReloadTable={refresh}></EditCollection>
-                    <DeleteCollection id={record.collectionId} handleReloadTable={refresh}></DeleteCollection>
+                    <DeleteCollection id={record.id} handleReloadTable={refresh}></DeleteCollection>
                 </Space>
             ),
         },

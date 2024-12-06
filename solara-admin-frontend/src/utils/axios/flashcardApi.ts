@@ -1,40 +1,41 @@
-import { FlashcardModel, FlashcardResModel, UpsertFlashcardReqModel } from "../../types/flashcard.type";
-import { BaseModel, BaseReModel, PageReqModel, PaginationResModel } from "../../types/general.type"
+import { IBaseModel, IPageRequest, IPaginate } from "../../types/general.type"
 import { FLASHCARD_URL } from "../url/flashcardUrl";
 import axiosClient from "./axiosClient";
+import {ExerciseDto, UpdateExerciseRequest} from "../../types/exercise";
 
 interface IFlashcardApi {
-    getFlashcards: (query: PageReqModel) => Promise<BaseReModel<PaginationResModel<FlashcardModel>>>;
-    getFlashcard: (id: string) => Promise<BaseReModel<FlashcardModel>>;
-    getOnCollection: (id: string, request: PageReqModel) => Promise<BaseReModel<PaginationResModel<FlashcardModel>>>;
-    postFlashcard: (request: UpsertFlashcardReqModel) => Promise<BaseReModel<FlashcardResModel>>;
-    putFlashcard: (id: string, request: UpsertFlashcardReqModel) => Promise<BaseReModel<FlashcardResModel>>;
-    deleteFlashcard: (id: string) => Promise<BaseModel>;
+    getFlashcards: (query: IPageRequest) => Promise<IBaseModel<IPaginate<ExerciseDto>>>;
+    getFlashcard: (id: string) => Promise<IBaseModel<ExerciseDto>>;
+    getOnCollection: (id: string, request: IPageRequest) => Promise<IBaseModel<IPaginate<ExerciseDto>>>;
+    postFlashcard: (request: UpdateExerciseRequest) => Promise<IBaseModel<ExerciseDto>>;
+    putFlashcard: (id: string, request: UpdateExerciseRequest) => Promise<IBaseModel<ExerciseDto>>;
+    deleteFlashcard: (id: string) => Promise<IBaseModel<ExerciseDto>>;
 }
 
 export const flashcardApi: IFlashcardApi = {
-    getFlashcards: async (query: PageReqModel) => {
-        const response = await axiosClient.get<BaseReModel<PaginationResModel<FlashcardModel>>>(FLASHCARD_URL.GETS(query));
+    getFlashcards: async (query: IPageRequest) => {
+        const response = await axiosClient.get<IBaseModel<IPaginate<ExerciseDto>>>(FLASHCARD_URL.GETS(query));
         return response.data;
     },
     getFlashcard: async (id: string) => {
-        const response = await axiosClient.get<BaseReModel<FlashcardModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(id));
+        const response = await axiosClient.get<IBaseModel<ExerciseDto>>(FLASHCARD_URL.GET_POS_PUT_DEL(id));
         return response.data;
     },
-    getOnCollection: async (id: string, request: PageReqModel) => {
-        const response = await axiosClient.get<BaseReModel<PaginationResModel<FlashcardModel>>>(FLASHCARD_URL.GET_ON_COLLECTION(id, request));
+    getOnCollection: async (id: string, request: IPageRequest) => {
+        console.log(request);
+        const response = await axiosClient.get<IBaseModel<IPaginate<ExerciseDto>>>(FLASHCARD_URL.GET_ON_COLLECTION(id, request));
         return response.data
     },
-    postFlashcard: async (request: UpsertFlashcardReqModel) => {
-        const response = await axiosClient.post<BaseReModel<FlashcardResModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(), request);
+    postFlashcard: async (request: UpdateExerciseRequest) => {
+        const response = await axiosClient.post<IBaseModel<ExerciseDto>>(FLASHCARD_URL.GET_POS_PUT_DEL(), request);
         return response.data;
     },
-    putFlashcard: async (id: string, request: UpsertFlashcardReqModel) => {
-        const response = await axiosClient.put<BaseReModel<FlashcardResModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(id), request);
+    putFlashcard: async (id: string, request: UpdateExerciseRequest) => {
+        const response = await axiosClient.put<IBaseModel<ExerciseDto>>(FLASHCARD_URL.GET_POS_PUT_DEL(id), request);
         return response.data;
     },
     deleteFlashcard: async (id: string) => {
-        const response = await axiosClient.delete<BaseModel>(FLASHCARD_URL.GET_POS_PUT_DEL(id));
+        const response = await axiosClient.delete<IBaseModel<ExerciseDto>>(FLASHCARD_URL.GET_POS_PUT_DEL(id));
         return response.data;
     }
 }

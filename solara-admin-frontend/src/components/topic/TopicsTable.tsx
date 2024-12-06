@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { TopicModel } from "../../types/topic.type.ts";
-import { PageReqModel, PageResModel } from "../../types/general.type.ts";
+import { TopicDto } from "../../types/topic.type.ts";
+import { IPageRequest, IPaginate } from "../../types/general.type.ts";
 import { useRequest } from "ahooks";
 import { topicApi } from "../../utils/axios/topicApi.ts";
 import { Button, Space, Table, TableProps } from "antd";
@@ -10,22 +10,22 @@ import DeleteTopic from "./DeleteTopic.tsx";
 import EditTopic from "./EditTopic.tsx";
 import { formatDateTime } from "../../utils/funcs/datetimeHelper.ts";
 import CreateTopic from "./CreateTopic.tsx";
-import ShowCollection from "./ShowCollection.tsx";
+import ShowSubTopic from "./ShowSubTopic.tsx";
 import AppTableQuery from "../general/AppTableQuery.tsx";
 
 
 
 const TopicsTable = () => {
 
-    const [topics, setTopics] = useState<TopicModel[] | undefined>([])
-    const [page, setPage] = useState<PageResModel>();
-    const [query, setQuery] = useState<PageReqModel>({
+    const [topics, setTopics] = useState<TopicDto[] | undefined>([])
+    const [page, setPage] = useState<IPaginate<TopicDto> | undefined>();
+    const [query, setQuery] = useState<IPageRequest>({
         page: 1,
-        pageSize: 10,
-        sort: ""
+        size: 10,
+        isAscending: false,
     });
 
-    const updateQuery = (key: keyof PageReqModel, value: string | number) => {
+    const updateQuery = (key: keyof IPageRequest, value: string | number) => {
         setQuery((prevQuery) => ({
             ...prevQuery,
             [key]: value,
@@ -34,19 +34,13 @@ const TopicsTable = () => {
 
     const { loading, refresh } = useRequest(async () => {
         const response = await topicApi.getTopics(query);
-        setTopics(response.responseRequest?.content)
-        setPage(response.responseRequest?.page)
+        setTopics(response.responseRequest?.items)
+        setPage(response.responseRequest);
     }, {
         refreshDeps: [query]
     })
 
-    const columns: TableProps<TopicModel>['columns'] = [
-        // {
-        //     title: 'Id',
-        //     dataIndex: 'topicId',
-        //     key: 'topicId',
-        //     render: (topicId) => shortenString(topicId)
-        // },
+    const columns: TableProps<TopicDto>['columns'] = [
         {
             title: 'Name',
             dataIndex: 'topicName',
@@ -59,16 +53,16 @@ const TopicsTable = () => {
         },
         {
             title: 'Created At',
-            dataIndex: 'createAt',
-            key: 'createAt',
+            dataIndex: 'createdOn',
+            key: 'createdOn',
             render: (datetime) => formatDateTime(datetime)
         },
         {
             title: 'Action',
             key: 'action',
-            render: (record: TopicModel) => (
+            render: (record: TopicDto) => (
                 <Space size="small">
-                    <ShowCollection topicId={record.topicId}></ShowCollection>
+                    <ShowSubTopic topicId={record.topicId}></ShowSubTopic>
                     <EditTopic topic={record} handleReloadTable={refresh}></EditTopic>
                     <DeleteTopic handleReloadTable={refresh} id={record.topicId}></DeleteTopic>
                 </Space>
