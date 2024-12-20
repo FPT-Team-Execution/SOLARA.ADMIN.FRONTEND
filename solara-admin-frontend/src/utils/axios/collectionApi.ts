@@ -31,7 +31,7 @@ export const collectionApi: ICollectionApi = {
         const response = await axiosClient.post<IBaseModel<SubTopicDto>>(COLLECTION_URL.GET_POS_PUT_DEL(), request);
         if (response.data.isSuccess == true) {
             notification.success({
-                message: "Sucess",
+                message: "Success",
                 description: messageHelper.createSucess("sub-topics")
             })
         }
