@@ -1,20 +1,26 @@
 import { FolderOpenOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { PATH_ADMIN } from '../../routes/path'
 
 interface IProps {
   id: string;
+  topicId: string;
 }
 
 const ShowFlashcard = (props: IProps) => {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate(`${PATH_ADMIN.exercise}/${props.topicId}/${props.id}`)
+  }
+
   return (
-    <>
-      <Link to={`${PATH_ADMIN.exercise}?collectionId=${props.id}`} >
-        <Button type="default" icon={<FolderOpenOutlined />}>
-        </Button>
-      </Link >
-    </>
+    <Button 
+      type="default" 
+      icon={<FolderOpenOutlined />}
+      onClick={handleClick}
+    />
   )
 }
 

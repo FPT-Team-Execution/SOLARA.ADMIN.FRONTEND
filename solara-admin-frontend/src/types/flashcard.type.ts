@@ -5,7 +5,7 @@ export type FlashcardModel = {
     difficulty?: string | null,
     imageUrl?: string | null,
     question?: string | null,
-    collectionId: string,
+    subTopicId: string,
     videoUrl?: string | null,
 }
 
@@ -14,7 +14,7 @@ export type FlashcardResModel = {
 }
 
 export type UpsertFlashcardReqModel = {
-    collectionId: string,
+    subTopicId: string,
     question: string,
     answer: string,
     imageUrl: string,

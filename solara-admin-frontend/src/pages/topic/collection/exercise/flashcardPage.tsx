@@ -1,23 +1,21 @@
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import FlashcardsTable from "../../../../components/flashcard/FlashcardsTable"
 import { useEffect } from "react";
 import { PATH_ADMIN } from "../../../../routes/path";
 
 const FlashcardPage = () => {
-  const [searchParams] = useSearchParams();
+  const { topicId, subTopicId } = useParams();
   const navigate = useNavigate();
-  const collectionId = searchParams.get('collectionId');
 
   useEffect(() => {
-    console.log(collectionId);
-    if (!collectionId) {
-      navigate(PATH_ADMIN.exercise);
+    if (!topicId || !subTopicId) {
+      navigate(PATH_ADMIN.topic);
     }
-  }, [collectionId, navigate]);
+  }, [topicId, subTopicId, navigate]);
 
   return (
     <div>
-      <FlashcardsTable collectionId={collectionId!}></FlashcardsTable>
+      <FlashcardsTable subTopicId={subTopicId!}></FlashcardsTable>
     </div>
   )
 }

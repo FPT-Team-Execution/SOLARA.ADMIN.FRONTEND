@@ -1,137 +1,142 @@
 import { EditOutlined } from '@ant-design/icons'
-import { Button, Modal, Input, Form } from 'antd'
+import { Button, Modal, Input, Form, Select, InputNumber } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useState } from 'react'
-import { FlashcardModel, UpsertFlashcardReqModel } from '../../types/flashcard.type'
-import { flashcardApi } from '../../utils/axios/flashcardApi'
-import { useRequest } from 'ahooks'
+import { ExerciseDto } from '../../types/exercise'
+import { useFlashcardStore } from '../../stores/flashcardStore'
 
 interface IProps {
-    handleReloadTable: () => void
-    flashcard: FlashcardModel
+  handleReloadTable: () => void
+  flashcard: ExerciseDto
 }
 
 const EditFlashcard = (props: IProps) => {
+  const [form] = Form.useForm();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const updateFlashcard = useFlashcardStore(state => state.updateFlashcard)
 
-    const [form] = Form.useForm<UpsertFlashcardReqModel>();
-    const [open, setOpen] = useState(false);
+  const difficultyOptions = [
+    { label: 'Easy', value: 'Easy' },
+    { label: 'Medium', value: 'Medium' },
+    { label: 'Hard', value: 'Hard' }
+  ];
 
-    const setInitialFormValues = () => {
-        form.setFieldsValue({
-            answer: props.flashcard.answer!,
-            collectionId: props.flashcard.collectionId!,
-            difficulty: props.flashcard.difficulty!,
-            question: props.flashcard.question!,
-            imageUrl: props.flashcard.imageUrl!,
-            videoUrl: props.flashcard.videoUrl!
-        })
-    }
-
-    const { loading, run: putFlashcard } = useRequest(async (id: string, values: UpsertFlashcardReqModel) => {
-        const request: UpsertFlashcardReqModel = {
-            answer: values.answer,
-            collectionId: props.flashcard.collectionId,
-            difficulty: values.difficulty,
-            question: values.question,
-            imageUrl: values.imageUrl,
-            videoUrl: values.videoUrl
-        }
-        const response = await flashcardApi.putFlashcard(id, request);
-        if (response.isSuccess == true) {
-            form.resetFields();
-            setOpen(false);
-            props.handleReloadTable();
-        }
-    }, {
-        manual: true,
-        onError: () => {
-        },
-        onSuccess: () => {
-        }
+  const setInitialFormValues = () => {
+    form.setFieldsValue({
+      exerciseId: props.flashcard.id,
+      question: props.flashcard.question,
+      difficulty: props.flashcard.difficulty,
+      xp: props.flashcard.xp,
+      subTopicId: props.flashcard.subTopicId,
+      imageUrl: props.flashcard.imageUrl,
+      videoUrl: props.flashcard.videoUrl,
     });
+  }
 
-    const handleOpen = async () => {
-        setInitialFormValues()
-        setOpen(true);
-    };
+  const handleOpen = () => {
+    setInitialFormValues();
+    setOpen(true);
+  };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+  const handleClose = () => setOpen(false);
 
-    const handleSubmit = async (values: UpsertFlashcardReqModel) => {
-        putFlashcard(props.flashcard.flashcardId, values)
-    };
+  const handleSubmit = async (values: any) => {
+    setLoading(true);
+    const success = await updateFlashcard({
+      ...values,
+      exerciseId: props.flashcard.id
+    });
+    
+    if (success) {
+      form.resetFields();
+      setOpen(false);
+      props.handleReloadTable();
+    }
+    setLoading(false);
+  }
 
+  return (
+    <>
+      <Button type="default" onClick={handleOpen} icon={<EditOutlined />} />
+      <Modal
+        open={open}
+        title={'Edit exercise'}
+        onCancel={handleClose}
+        width={800}
+        footer={[
+          <Button key="back" onClick={handleClose}>
+            Cancel
+          </Button>,
+        ]}
+      >
+        <Form form={form} onFinish={handleSubmit} layout="vertical">
+          <Form.Item
+            name="exerciseId"
+            hidden={true}
+          >
+            <Input />
+          </Form.Item>
 
+          <Form.Item
+            label="Question"
+            name="question"
+            rules={[{ required: true, message: 'Please input the question!' }]}
+          >
+            <TextArea rows={2} />
+          </Form.Item>
 
-    return (
-        <>
-            <Button type="default" onClick={handleOpen} icon={<EditOutlined />}>
-            </Button>
-            <Modal
-                open={open}
-                title={'Edit flashcard'}
-                onCancel={handleClose}
-                footer={[
-                    <Button key="back" onClick={handleClose}>
-                        Cancel
-                    </Button>,
-                ]}
+          <div className="flex gap-4">
+            <Form.Item
+              className="w-1/2"
+              label="Difficulty"
+              name="difficulty"
+              rules={[{ required: true, message: 'Please select difficulty!' }]}
             >
-                <div className={'flex w-full gap-2'}>
-                    <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
-                        <Form.Item
-                            label="Question"
-                            name="question"
-                            rules={[{ required: true, message: 'Please input the name!' }]}
-                        >
-                            <TextArea rows={2} />
-                        </Form.Item>
+              <Select options={difficultyOptions} />
+            </Form.Item>
 
-                        <Form.Item
-                            label="Answer"
-                            name="answer"
-                            rules={[{ required: true, message: 'Please input the answer!' }]}
-                        >
-                            <TextArea rows={4} />
-                        </Form.Item>
+            <Form.Item
+              className="w-1/2"
+              label="XP"
+              name="xp"
+              rules={[{ required: true, message: 'Please input XP!' }]}
+            >
+              <InputNumber min={0} className="w-full" />
+            </Form.Item>
+          </div>
 
-                        <Form.Item
-                            label="Difficulty"
-                            name="difficulty"
-                            rules={[{ required: true, message: 'Please input the video url!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
+          <Form.Item
+            label="Sub Topic ID"
+            name="subTopicId"
+            rules={[{ required: true, message: 'Please input sub topic ID!' }]}
+          >
+            <Input />
+          </Form.Item>
 
-                        <Form.Item
-                            label="Image Url"
-                            name="imageUrl"
-                            rules={[{ required: false, message: 'Please input the image url!' }]}
-                        >
-                            <TextArea rows={2} />
-                        </Form.Item>
+          <Form.Item
+            label="Image URL"
+            name="imageUrl"
+          >
+            <TextArea rows={2} />
+          </Form.Item>
 
-                        <Form.Item
-                            label="Video Url"
-                            name="videoUrl"
-                            rules={[{ required: false, message: 'Please input the video url!' }]}
-                        >
-                            <TextArea rows={2} />
-                        </Form.Item>
+          <Form.Item
+            label="Video URL"
+            name="videoUrl"
+          >
+            <TextArea rows={2} />
+          </Form.Item>
 
-                        <Form.Item>
-                            <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
-                                Update
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </div>
-
-            </Modal>
-        </>
-    )
+          <Form.Item>
+            <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
+              Update
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  )
 }
 
 export default EditFlashcard

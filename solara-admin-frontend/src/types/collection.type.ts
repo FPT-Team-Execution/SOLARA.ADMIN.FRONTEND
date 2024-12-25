@@ -1,5 +1,5 @@
 export type CollectionModel = {
-    collectionId: string,
+    subTopicId: string,
     collectionName?: string | null,
     createAt?: Date | null,
     description?: string | null

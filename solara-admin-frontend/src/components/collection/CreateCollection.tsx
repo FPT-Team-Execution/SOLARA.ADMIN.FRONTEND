@@ -1,10 +1,9 @@
 import { Button, Form, Input, Modal } from "antd";
 import { UpdateSubTopicRequest } from "../../types/subTopic";
 import { useState } from "react";
-import { useRequest } from "ahooks";
 import TextArea from "antd/es/input/TextArea";
 import { PlusOutlined } from "@ant-design/icons";
-import { collectionApi } from "../../utils/axios/collectionApi";
+import { useCollectionStore } from "../../stores/collectionStore";
 
 interface IProps {
     topicId: string
@@ -14,39 +13,28 @@ interface IProps {
 const CreateCollection = (props: IProps) => {
     const [form] = Form.useForm<UpdateSubTopicRequest>();
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const createCollection = useCollectionStore(state => state.createCollection);
 
-    const { loading, run: postCollection } = useRequest(async (values: UpdateSubTopicRequest) => {
-        console.log("===", values);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const handleSubmit = async (values: UpdateSubTopicRequest) => {
+        setLoading(true);
         const request: UpdateSubTopicRequest = {
             name: values.name,
             description: values.description,
             topicId: props.topicId,
             subTopicId: values.subTopicId
-        }
-        const response = await collectionApi.postCollection(request);
-        if (response.isSuccess == true) {
+        };
+        
+        const success = await createCollection(request);
+        if (success) {
             form.resetFields();
             setOpen(false);
             props.handleReloadTable();
         }
-    }, {
-        manual: true,
-        onError: () => {
-        },
-        onSuccess: () => {
-        }
-    });
-
-    const handleOpen = async () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleSubmit = async (values: UpdateSubTopicRequest) => {
-        postCollection(values);
+        setLoading(false);
     };
 
     return (

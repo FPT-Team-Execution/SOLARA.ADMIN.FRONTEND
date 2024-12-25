@@ -36,7 +36,7 @@ const items: MenuItem[] = [
 ]
 
 const BaseLayout = ({ children }: PropsWithChildren) => {
-    const [pathActive, setPathActive] = useState([PATH_ADMIN.dashboard])
+    const [pathActive, setPathActive] = useState<string[]>([PATH_ADMIN.dashboard])
     const location = useLocation()
 
     useEffect(() => {

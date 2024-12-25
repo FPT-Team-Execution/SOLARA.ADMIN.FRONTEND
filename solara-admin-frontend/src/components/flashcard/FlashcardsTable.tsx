@@ -1,45 +1,47 @@
-import { ReloadOutlined } from "@ant-design/icons";
-import { useRequest } from "ahooks";
+import { ReloadOutlined, FileTextOutlined } from "@ant-design/icons";
 import { TableProps, Button, Table, Space } from "antd";
-import { useState } from "react";
-import { IPaginate, IPageRequest } from "../../types/general.type";
-import { flashcardApi } from "../../utils/axios/flashcardApi";
+import { useEffect } from "react";
+import { ExerciseDto } from "../../types/exercise";
+import { useFlashcardStore } from '../../stores/flashcardStore'
 import FlashcardDetails from "./FlashcardDetails";
 import CreateFlashcard from "./CreateFlashcard";
 import DeleteFlashcard from "./DeleteFlashcard";
-// import EditFlashcard from "./EditFlashcard";
+import EditFlashcard from "./EditFlashcard";
 import AppTableQuery from "../general/AppTableQuery";
-import {ExerciseDto} from "../../types/exercise";
+import ManageOptions from './ManageOptions';
+import { useNavigate } from 'react-router-dom';
+import { PATH_ADMIN } from '../../routes/path';
+
 interface IProps {
-  collectionId: string
+  subTopicId: string;
 }
 
-const FlashcardsTable = (props: IProps) => {
-  const [flashcards, setFlashcards] = useState<ExerciseDto[] | undefined>([])
-  const [selectedFlashcard, setSelectedFlashcard] = useState<ExerciseDto | null>(null);
-  const [page, setPage] = useState<IPaginate<ExerciseDto>>();
-  const [query, setQuery] = useState<IPageRequest>({
-    page: 1,
-    size: 10,
-    isAscending: false
-  });
+const FlashcardsTable = ({ subTopicId }: IProps) => {
+  const { 
+    flashcards, 
+    pagination, 
+    loading, 
+    query, 
+    setQuery, 
+    fetchFlashcards,
+    setSelectedFlashcard,
+    selectedFlashcard,
+  } = useFlashcardStore()
 
-  const updateQuery = (key: keyof IPageRequest, value: string | number) => {
-    setQuery((prevQuery) => ({
-      ...prevQuery,
-      [key]: value,
-    }));
-  };
+  const navigate = useNavigate();
 
-  const { loading, refresh } = useRequest(async () => {
-    const response = await flashcardApi.getOnCollection(props.collectionId, query);
-    console.log("XXX");
-    setSelectedFlashcard(null)
-    setFlashcards(response.responseRequest?.items)
-    setPage(response.responseRequest)
-  }, {
-    refreshDeps: [query]
-  })
+  useEffect(() => {
+    console.log(subTopicId);
+    if (subTopicId) {
+      fetchFlashcards(subTopicId)
+    }
+  }, [query, subTopicId])
+
+  const handleReload = () => {
+    if (subTopicId) {
+      fetchFlashcards(subTopicId)
+    }
+  }
 
   const columns: TableProps<ExerciseDto>['columns'] = [
     {
@@ -47,42 +49,85 @@ const FlashcardsTable = (props: IProps) => {
       dataIndex: 'no',
       key: 'no',
       render: (_, __, index: number) => index + 1,
+      width: '5%',
     },
     {
       title: 'Question',
       dataIndex: 'question',
       key: 'question',
+      width: '40%',
     },
     {
-      title: 'Action',
-      key: 'action',
-      render: (record: ExerciseDto) => (
-        <Space size="small">
-          {/* <EditFlashcard handleReloadTable={refresh} flashcard={record}></EditFlashcard> */}
-          <DeleteFlashcard handleReloadTable={refresh} flashcardId={record.id}></DeleteFlashcard>
+      title: 'Difficulty',
+      dataIndex: 'difficulty',
+      key: 'difficulty',
+      width: '15%',
+    },
+    {
+      title: 'XP',
+      dataIndex: 'xp',
+      key: 'xp',
+      width: '10%',
+    },
+    {
+      title: 'Type',
+      dataIndex: 'exerciseTypeName',
+      key: 'exerciseTypeName',
+      width: '15%',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space>
+          <ManageOptions 
+            exerciseId={record.id} 
+            options={record.answers || []}
+            onOptionsUpdate={handleReload}
+          />
+          <EditFlashcard 
+            handleReloadTable={() => handleReload()} 
+            flashcard={record} 
+          />
+          <DeleteFlashcard 
+            handleReloadTable={() => handleReload()} 
+            flashcardId={record.id} 
+          />
         </Space>
       ),
     },
   ];
 
-  // Row selection configuration
-
   // Handle row click
   const handleRowClick = (record: ExerciseDto) => {
-    setSelectedFlashcard(record); // Set the selected flashcard to display details
+    setSelectedFlashcard(record);
   };
 
   return (
     <div>
       <div className="flex float-end space-x-2 p-4">
-        <Button type="dashed" onClick={refresh} icon={<ReloadOutlined />}>
+        <Button 
+          type="primary"
+          onClick={() => navigate('/exercise-types')}
+          icon={<FileTextOutlined />}
+        >
+          Exercise Types
+        </Button>
+        <Button type="dashed" onClick={handleReload} icon={<ReloadOutlined />}>
           Reload
         </Button>
-        <CreateFlashcard collectionId={props.collectionId} handleReloadTable={refresh}></CreateFlashcard>
+        <CreateFlashcard 
+          subTopicId={subTopicId || ''}
+          handleReloadTable={handleReload}
+        />
       </div>
 
       <div className="flex float-start space-x-2 p-4">
-        <AppTableQuery page={page} query={query} updateQuery={updateQuery}></AppTableQuery>
+        <AppTableQuery 
+          page={pagination} 
+          query={query} 
+          updateQuery={(key, value) => setQuery({...query, [key]: value})}
+        />
       </div>
 
       <div>
@@ -97,14 +142,17 @@ const FlashcardsTable = (props: IProps) => {
               onRow={(record) => ({
                 onClick: () => handleRowClick(record),
                 style: { cursor: 'pointer' }
-              })} />
+              })} 
+            />
           </div>
 
           <div className="w-7/12">
-            <FlashcardDetails handleReloadTable={refresh} flashcard={selectedFlashcard}></FlashcardDetails>
+            <FlashcardDetails 
+              handleReloadTable={handleReload} 
+              flashcard={selectedFlashcard}
+            />
           </div>
         </div>
-
       </div>
     </div>
   );

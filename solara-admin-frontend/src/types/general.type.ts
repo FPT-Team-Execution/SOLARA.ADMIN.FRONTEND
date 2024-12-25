@@ -14,10 +14,16 @@ export interface IPaginate<T> {
 }
 
 export interface IPageRequest {
-    searchProp?: string;
-    searchKey?: string;
     page: number;
     size: number;
+    search?: string;
     orderOn?: string;
     isAscending: boolean;
+}
+
+export interface ApiResponse<T> {
+  isSuccess: boolean;
+  message?: string;
+  responseRequest: T;
+  data: T;
 }
