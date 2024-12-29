@@ -1,6 +1,6 @@
 import { DeleteOutlined } from "@ant-design/icons"
 import { Button, Popconfirm } from "antd"
-import { collectionApi } from "../../utils/axios/collectionApi"
+import {collectionApi} from '../../utils/axios/collectionApi'
 import { useRequest } from "ahooks"
 
 interface IProps {
@@ -9,10 +9,9 @@ interface IProps {
 }
 
 const DeleteCollection = (props: IProps) => {
-
     const { loading, run: deleteCollection } = useRequest(async () => {
         const response = await collectionApi.deleteCollection(props.id)
-        if (response.isSuccess == true) {
+        if (response.data.isSuccess === true) {
             props.handleReloadTable()
         }
     }, {

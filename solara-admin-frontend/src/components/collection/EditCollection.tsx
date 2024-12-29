@@ -6,7 +6,7 @@ import { SubTopicDto, UpdateSubTopicRequest } from "../../types/subTopic"
 
 import { useState } from "react"
 import { useRequest } from "ahooks"
-import { collectionApi } from "../../utils/axios/collectionApi"
+import {collectionApi} from '../../utils/axios/collectionApi'
 
 interface IProps {
     topicId: string
@@ -26,26 +26,13 @@ const EditCollection = (props: IProps) => {
         })
     }
 
-    const { loading, run: putCollection } = useRequest(async (id: string, values: UpdateSubTopicRequest) => {
-        
-        const request: UpdateSubTopicRequest = {
-            name: values.name,
-            description: values.description,
-            topicId: props.topicId,
-            subTopicId: props.collection.id //UPDATE SUBTOPIC LATER
-        }
-        const response = await collectionApi.putCollection(id, request);
-        if (response.isSuccess == true) {
-            form.resetFields();
-            setOpen(false);
-            props.handleReloadTable();
+    const { loading, run: updateCollection } = useRequest(async (values: UpdateSubTopicRequest) => {
+        const response = await collectionApi.putCollection(props.collection.id, values)
+        if (response.data.isSuccess === true) {
+            props.handleReloadTable()
         }
     }, {
-        manual: true,
-        onError: () => {
-        },
-        onSuccess: () => {
-        }
+        manual: true
     })
 
     const handleOpen = async () => {
@@ -58,7 +45,7 @@ const EditCollection = (props: IProps) => {
     };
 
     const handleSubmit = async (values: UpdateSubTopicRequest) => {
-        putCollection(props.collection.id, values)
+        updateCollection(values)
     };
 
     return (

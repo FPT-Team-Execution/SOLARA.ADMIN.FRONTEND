@@ -1,4 +1,4 @@
-import { Button, Modal, Form, Input, Switch, message } from 'antd';
+import { Button, Modal, Form, Switch, message } from 'antd';
 import { useState, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
@@ -14,10 +14,11 @@ interface Option {
 
 interface IProps {
   exerciseId: string;
+  options: any[];
   onOptionsUpdate: () => void;
 }
 
-const ManageOptions = ({ exerciseId, onOptionsUpdate }: IProps) => {
+const ManageOptions = ({ exerciseId, options, onOptionsUpdate }: IProps) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [existingOptions, setExistingOptions] = useState<Option[]>([]);
@@ -113,7 +114,7 @@ const ManageOptions = ({ exerciseId, onOptionsUpdate }: IProps) => {
   return (
     <>
       <Button type="primary" onClick={() => setOpen(true)} icon={<PlusOutlined />}>
-        Manage Options
+        
       </Button>
 
       <Modal

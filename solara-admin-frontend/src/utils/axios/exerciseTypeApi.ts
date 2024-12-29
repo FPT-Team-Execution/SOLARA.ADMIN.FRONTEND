@@ -1,4 +1,4 @@
-import { axiosInstance } from "./axiosInstance";
+import axiosInstance from './axiosInstance';
 import { CreateExerciseTypeRequest, UpdateExerciseTypeRequest } from "../../types/exerciseType";
 
 export const exerciseTypeApi = {

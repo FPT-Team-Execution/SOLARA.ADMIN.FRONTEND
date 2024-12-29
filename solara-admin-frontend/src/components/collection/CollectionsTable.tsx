@@ -22,11 +22,16 @@ const CollectionsTable = (props: IProps) => {
     console.log('Pagination:', pagination) // Debug pagination
 
     useEffect(() => {
-        console.log('TopicId:', props.topicId)
         if (props.topicId) {
             fetchCollections(props.topicId)
         }
-    }, [query, props.topicId])
+    }, [props.topicId])
+
+    useEffect(() => {
+        if (props.topicId && query) {
+            fetchCollections(props.topicId)
+        }
+    }, [query])
 
     const updateQuery = (key: keyof IPageRequest, value: string | number | boolean) => {
         setQuery({...query, [key]: value})

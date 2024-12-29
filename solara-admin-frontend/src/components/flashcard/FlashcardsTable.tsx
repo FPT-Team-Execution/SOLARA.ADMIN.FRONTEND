@@ -10,7 +10,6 @@ import EditFlashcard from "./EditFlashcard";
 import AppTableQuery from "../general/AppTableQuery";
 import ManageOptions from './ManageOptions';
 import { useNavigate } from 'react-router-dom';
-import { PATH_ADMIN } from '../../routes/path';
 
 interface IProps {
   subTopicId: string;
@@ -35,7 +34,7 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
     if (subTopicId) {
       fetchFlashcards(subTopicId)
     }
-  }, [query, subTopicId])
+  }, [query, subTopicId, fetchFlashcards])
 
   const handleReload = () => {
     if (subTopicId) {
@@ -82,7 +81,7 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
         <Space>
           <ManageOptions 
             exerciseId={record.id} 
-            options={record.answers || []}
+            options={record.ans || []}
             onOptionsUpdate={handleReload}
           />
           <EditFlashcard 
@@ -104,53 +103,69 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
   };
 
   return (
-    <div>
-      <div className="flex float-end space-x-2 p-4">
-        <Button 
-          type="primary"
-          onClick={() => navigate('/exercise-types')}
-          icon={<FileTextOutlined />}
-        >
-          Exercise Types
-        </Button>
-        <Button type="dashed" onClick={handleReload} icon={<ReloadOutlined />}>
-          Reload
-        </Button>
-        <CreateFlashcard 
-          subTopicId={subTopicId || ''}
-          handleReloadTable={handleReload}
-        />
-      </div>
+    <div className="container mx-auto px-4">
+      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
+        <div className="order-2 sm:order-1">
+          <AppTableQuery 
+            page={pagination} 
+            query={query} 
+            updateQuery={(key, value) => setQuery({...query, [key]: value})}
+          />
+        </div>
 
-      <div className="flex float-start space-x-2 p-4">
-        <AppTableQuery 
-          page={pagination} 
-          query={query} 
-          updateQuery={(key, value) => setQuery({...query, [key]: value})}
-        />
+        <div className="flex flex-wrap gap-2 order-1 sm:order-2">
+          <Button 
+            type="primary"
+            onClick={() => navigate('/exercise-types')}
+            icon={<FileTextOutlined />}
+            className="hover:scale-105 transition-transform"
+          >
+            Exercise Types
+          </Button>
+          <Button 
+            type="dashed" 
+            onClick={handleReload} 
+            icon={<ReloadOutlined />}
+            className="hover:scale-105 transition-transform"
+          >
+            Reload
+          </Button>
+          <CreateFlashcard 
+            subTopicId={subTopicId || ''}
+            handleReloadTable={handleReload}
+          />
+        </div>
       </div>
 
       <div>
-        <div className='flex w-full space-x-4'>
-          <div className='w-5/12'>
-            <Table
-              loading={loading}
-              className="shadow"
-              dataSource={flashcards}
-              columns={columns}
-              pagination={false}
-              onRow={(record) => ({
-                onClick: () => handleRowClick(record),
-                style: { cursor: 'pointer' }
-              })} 
-            />
+        <div className='flex flex-col lg:flex-row gap-6'>
+          <div className='w-full lg:w-8/12'>
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <Table
+                loading={loading}
+                dataSource={flashcards}
+                columns={columns}
+                pagination={false}
+                onRow={(record) => ({
+                  onClick: () => handleRowClick(record),
+                  style: { 
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s',
+                  },
+                  className: 'hover:bg-gray-50'
+                })}
+                scroll={{ x: 'max-content' }}
+              />
+            </div>
           </div>
 
-          <div className="w-7/12">
-            <FlashcardDetails 
-              handleReloadTable={handleReload} 
-              flashcard={selectedFlashcard}
-            />
+          <div className="w-full lg:w-4/12">
+            <div className="bg-white rounded-lg shadow-md p-4">
+              <FlashcardDetails 
+                handleReloadTable={handleReload} 
+                flashcard={selectedFlashcard}
+              />
+            </div>
           </div>
         </div>
       </div>

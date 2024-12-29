@@ -1,4 +1,4 @@
-import { axiosInstance } from './axiosInstance';
+import axiosInstance  from './axiosInstance';
 import { ApiResponse } from '../../types/general.type';
 import { CreateLearningPackageRequest, LearningPackage, UpdateLearningPackageRequest } from '../../types/learningPackage.type';
 

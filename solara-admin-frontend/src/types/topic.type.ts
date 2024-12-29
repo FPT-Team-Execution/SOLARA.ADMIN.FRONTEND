@@ -5,6 +5,7 @@ export type TopicDto = {
     description: string;
     topicName: string;
     totalSubTopic: number;
+    thumbnail: string;
     createdOn?: Date | null;
     updatedOn?: Date | null;
 }
@@ -17,15 +18,15 @@ export type GetPagedTopicsRequest = IPageRequest & {
 
 }
 
-export type UpdateTopicRequest = {
+export interface UpdateTopicRequest {
     topicId: string;
     topicName: string;
     topicDescription: string;
-    totalSubTopic: number;
-};
+    thumbnail: string;
+}
 
-export type CreateTopicRequest = {
+export interface CreateTopicRequest {
     topicName: string;
     topicDescription: string;
-    totalSubTopic: number;
-};
+    totalSubTopic?: number;
+}

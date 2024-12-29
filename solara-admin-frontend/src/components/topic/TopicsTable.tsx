@@ -3,7 +3,7 @@ import { TopicDto } from "../../types/topic.type.ts";
 import { IPageRequest, IPaginate } from "../../types/general.type.ts";
 import { useRequest } from "ahooks";
 import { topicApi } from "../../utils/axios/topicApi.ts";
-import { Button, Space, Table, TableProps } from "antd";
+import { Button, Space, Table, TableProps, Modal } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import DeleteTopic from "./DeleteTopic.tsx";
 import EditTopic from "./EditTopic.tsx";
@@ -23,6 +23,8 @@ const TopicsTable = () => {
         size: 10,
         isAscending: false,
     });
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
 
     const updateQuery = (key: keyof IPageRequest, value: string | number | boolean) => {
         setQuery((prevQuery) => ({
@@ -39,7 +41,36 @@ const TopicsTable = () => {
         refreshDeps: [query]
     })
 
+    const handlePreview = (imageUrl: string) => {
+        setPreviewImage(imageUrl || 'https://placehold.co/800x600?text=No+Image');
+        setPreviewOpen(true);
+    };
+
     const columns: TableProps<TopicDto>['columns'] = [
+        {
+            title: 'Thumbnail',
+            dataIndex: 'thumbnail',
+            key: 'thumbnail',
+            render: (thumbnail: string) => (
+                <img 
+                    src={thumbnail || 'https://placehold.co/100x60'}
+                    alt="Topic thumbnail" 
+                    style={{ 
+                        width: '100px', 
+                        height: '60px', 
+                        objectFit: 'cover',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => handlePreview(thumbnail)}
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://placehold.co/100x60?text=No+Image';
+                        target.onerror = null;
+                    }}
+                />
+            )
+        },
         {
             title: 'Name',
             dataIndex: 'topicName',
@@ -87,6 +118,18 @@ const TopicsTable = () => {
                 <Table loading={loading} className="shadow" dataSource={topics} columns={columns} pagination={false} />
             </div>
 
+            <Modal
+                open={previewOpen}
+                title="Preview Thumbnail"
+                footer={null}
+                onCancel={() => setPreviewOpen(false)}
+            >
+                <img
+                    alt="Preview"
+                    style={{ width: '100%' }}
+                    src={previewImage}
+                />
+            </Modal>
         </div>
     );
 };

@@ -1,23 +1,37 @@
-export type FlashcardModel = {
-    flashcardId: string,
-    answer?: string | null,
-    createAt?: Date | null,
-    difficulty?: string | null,
-    imageUrl?: string | null,
-    question?: string | null,
-    subTopicId: string,
-    videoUrl?: string | null,
+export interface FlashcardDto {
+    id: string;
+    question: string;
+    difficulty: string;
+    xp: number;
+    imageUrl?: string;
+    videoUrl?: string;
+    answers: FlashcardAnswerDto[];
+    collectionId: string;
+    exerciseTypeId?: string;
 }
 
-export type FlashcardResModel = {
-    flashcard: FlashcardModel
+export interface FlashcardAnswerDto {
+    id: string;
+    optionText: string;
+    explanation: string;
+    isCorrect: boolean;
 }
 
-export type UpsertFlashcardReqModel = {
-    subTopicId: string,
-    question: string,
-    answer: string,
-    imageUrl: string,
-    videoUrl: string,
-    difficulty: string
+export interface CreateFlashcardRequest {
+    question: string;
+    difficulty: string;
+    xp: number;
+    imageUrl?: string;
+    videoUrl?: string;
+    collectionId: string;
+    exerciseTypeId?: string;
+    answers: {
+        optionText: string;
+        explanation: string;
+        isCorrect: boolean;
+    }[];
+}
+
+export interface UpdateFlashcardRequest extends CreateFlashcardRequest {
+    id: string;
 }

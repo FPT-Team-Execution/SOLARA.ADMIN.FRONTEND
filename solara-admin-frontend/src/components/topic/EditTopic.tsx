@@ -21,7 +21,7 @@ const EditTopic = (props: IProps) => {
             topicName: value.topicName,
             topicDescription: value.topicDescription,
             topicId: id,
-            totalSubTopic: value.totalSubTopic
+            thumbnail: value.thumbnail
         }
 
         const response = await topicApi.putTopic(request);
@@ -41,7 +41,8 @@ const EditTopic = (props: IProps) => {
     const setInitialFormValues = () => {
         form.setFieldsValue({
             topicName: props.topic.topicName!,
-            topicDescription: props.topic.description!
+            topicDescription: props.topic.description!,
+            thumbnail: props.topic.thumbnail
         })
     }
 
@@ -91,13 +92,12 @@ const EditTopic = (props: IProps) => {
                         </Form.Item>
 
                         <Form.Item
-                            label="Total Sub Topic"
-                            name="totalSubTopic"
-                            rules={[{ required: true, message: 'Please input the totalSubTopic!' }]}
+                            label="Thumbnail"
+                            name="thumbnail"
+                            rules={[{ required: true, message: 'Please input the thumbnail URL!' }]}
                         >
                             <Input />
                         </Form.Item>
-
 
                         <Form.Item>
                             <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">

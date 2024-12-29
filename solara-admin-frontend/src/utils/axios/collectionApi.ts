@@ -1,4 +1,4 @@
-import { axiosInstance } from "./axiosInstance"
+import axiosInstance  from "./axiosInstance"
 import { IPageRequest } from "../../types/general.type"
 import { UpdateSubTopicRequest } from "../../types/subTopic"
 

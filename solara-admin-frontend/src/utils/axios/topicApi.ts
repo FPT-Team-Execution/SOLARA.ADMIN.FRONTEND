@@ -1,14 +1,14 @@
 import axiosClient from "./axiosClient.ts";
 import { IBaseModel, IPaginate, IPageRequest } from "../../types/general.type.ts";
 import { TOPIC_URL } from "../url/topicUrl.ts";
-import { TopicDto, TopicResModel, UpdateTopicRequest, CreateTopicRequest } from "../../types/topic.type.ts";
+import { TopicDto, TopicResModel, UpdateTopicRequest} from "../../types/topic.type.ts";
 import { notification } from "antd";
 import { messageHelper } from "../funcs/messageHelper.ts";
 
 interface ITopicApi {
     getTopics: (query: IPageRequest) => Promise<IBaseModel<IPaginate<TopicDto>>>;
     getTopic: (id: string) => Promise<IBaseModel<TopicResModel>>;
-    postTopic: (request: CreateTopicRequest) => Promise<IBaseModel<TopicResModel>>;
+    postTopic: (formData: FormData) => Promise<IBaseModel<TopicResModel>>;
     putTopic: (request: UpdateTopicRequest) => Promise<IBaseModel<TopicResModel>>;
     deleteTopic: (id: string) => Promise<IBaseModel<TopicDto>>;
 }
@@ -22,12 +22,12 @@ export const topicApi: ITopicApi = {
         const response = await axiosClient.get<IBaseModel<TopicResModel>>(TOPIC_URL.GET_POS_PUT_DEL(id));
         return response.data;
     },
-    postTopic: async (request: CreateTopicRequest) => {
-        const response = await axiosClient.post<IBaseModel<TopicResModel>>(TOPIC_URL.GET_POS_PUT_DEL(), request);
-        if (response.data.isSuccess == true) notification.success({
-            message: 'Success',
-            description: messageHelper.createSucess("topic")
-        })
+    postTopic: async (formData: FormData) => {
+        const response = await axiosClient.post<IBaseModel<TopicResModel>>(TOPIC_URL.GET_POS_PUT_DEL(), formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     },
     putTopic: async ( request: UpdateTopicRequest) => {

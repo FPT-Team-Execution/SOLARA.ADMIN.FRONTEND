@@ -1,4 +1,4 @@
-import { axiosInstance } from "./axiosInstance"
+import axiosInstance from "./axiosInstance"
 import { ApiResponse } from '../../types/general.type';
 
 interface FlashcardRequest {
@@ -17,12 +17,6 @@ interface FlashcardRequest {
   }[]
 }
 
-interface OptionRequest {
-  optionId: string;
-  optionText: string;
-  explanation: string;
-  isCorrect: boolean;
-}
 
 interface Option {
   optionText: string;
