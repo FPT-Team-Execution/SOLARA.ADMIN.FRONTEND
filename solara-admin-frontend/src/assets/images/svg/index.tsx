@@ -1,2 +1,2 @@
-export * from './IconSun'
-export * from './IconMoon.tsx'
+export { default as IconSun } from './IconSun'
+export { default as IconMoon } from './IconMoon'

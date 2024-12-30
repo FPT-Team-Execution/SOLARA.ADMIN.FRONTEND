@@ -1,9 +1,10 @@
 import { Button, Modal, Form, Switch, message } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { flashcardApi } from '../../utils/axios/flashcardApi';
 import TextArea from 'antd/es/input/TextArea';
+import { AnswerDto } from '../../types/exercise';
 
 interface Option {
   id: string;
@@ -14,11 +15,11 @@ interface Option {
 
 interface IProps {
   exerciseId: string;
-  options: any[];
+  options: AnswerDto[];
   onOptionsUpdate: () => void;
 }
 
-const ManageOptions = ({ exerciseId, options, onOptionsUpdate }: IProps) => {
+const ManageOptions = ({ exerciseId, onOptionsUpdate }: IProps) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [existingOptions, setExistingOptions] = useState<Option[]>([]);
@@ -26,7 +27,7 @@ const ManageOptions = ({ exerciseId, options, onOptionsUpdate }: IProps) => {
   const [updatingOptionId, setUpdatingOptionId] = useState<string | null>(null);
   const [deletingOptionId, setDeletingOptionId] = useState<string | null>(null);
 
-  const refreshOptions = async () => {
+  const refreshOptions = useCallback(async () => {
     setLoading(true);
     try {
       const response = await flashcardApi.getExercise(exerciseId);
@@ -43,13 +44,13 @@ const ManageOptions = ({ exerciseId, options, onOptionsUpdate }: IProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [exerciseId, onOptionsUpdate]);
 
   useEffect(() => {
     if (open) {
       refreshOptions();
     }
-  }, [open]);
+  }, [open, refreshOptions]);
 
   const { loading: addLoading, run: addOption } = useRequest(
     async (values: { optionText: string; explanation: string; isCorrect: boolean }) => {
@@ -65,14 +66,20 @@ const ManageOptions = ({ exerciseId, options, onOptionsUpdate }: IProps) => {
           form.resetFields();
           await refreshOptions();
         }
-      } catch (error) {
+      } catch {
         message.error('Failed to add option');
       }
     },
     { manual: true }
   );
 
-  const handleUpdateOption = async (optionId: string, values: any) => {
+  interface OptionFormValues {
+    optionText: string;
+    explanation: string;
+    isCorrect: boolean;
+  }
+
+  const handleUpdateOption = async (optionId: string, values: OptionFormValues) => {
     setUpdatingOptionId(optionId);
     try {
       const response = await flashcardApi.putOption(exerciseId, optionId, {
@@ -85,7 +92,7 @@ const ManageOptions = ({ exerciseId, options, onOptionsUpdate }: IProps) => {
         message.success('Option updated successfully');
         await refreshOptions();
       }
-    } catch (error) {
+    } catch {
       message.error('Failed to update option');
     } finally {
       setUpdatingOptionId(null);
@@ -100,14 +107,14 @@ const ManageOptions = ({ exerciseId, options, onOptionsUpdate }: IProps) => {
         message.success('Option deleted successfully');
         await refreshOptions();
       }
-    } catch (error) {
+    } catch {
       message.error('Failed to delete option');
     } finally {
       setDeletingOptionId(null);
     }
   };
 
-  const handleAddOption = async (values: any) => {
+  const handleAddOption = async (values: OptionFormValues) => {
     await addOption(values);
   };
 

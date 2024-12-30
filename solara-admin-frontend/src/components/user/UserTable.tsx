@@ -20,7 +20,7 @@ const UserTable = () => {
         isAscending: false,
     });
 
-    const updateQuery = (key: keyof IPageRequest, value: string | number) => {
+    const updateQuery = (key: keyof IPageRequest, value: string | number | boolean) => {
         setQuery((prevQuery) => ({
             ...prevQuery,
             [key]: value,
@@ -58,7 +58,7 @@ const UserTable = () => {
             render: (record: UserDto) => (
                 <Space size="small">
                     <EditUser user={record} handleReloadTable={refresh} />
-                    <DeleteUser handleReloadTable={refresh} id={record.id} />
+                    <DeleteUser handleReloadTable={refresh} id={record.userId} />
                 </Space>
             ),
         },

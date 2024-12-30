@@ -10,8 +10,18 @@ interface IProps {
   flashcard: ExerciseDto
 }
 
+interface FlashcardFormValues {
+  exerciseId: string;
+  question: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  xp: number;
+  subTopicId: string;
+  imageUrl?: string;
+  videoUrl?: string;
+}
+
 const EditFlashcard = (props: IProps) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FlashcardFormValues>();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const updateFlashcard = useFlashcardStore(state => state.updateFlashcard)
@@ -26,7 +36,7 @@ const EditFlashcard = (props: IProps) => {
     form.setFieldsValue({
       exerciseId: props.flashcard.id,
       question: props.flashcard.question,
-      difficulty: props.flashcard.difficulty,
+      difficulty: props.flashcard.difficulty as 'Easy' | 'Medium' | 'Hard',
       xp: props.flashcard.xp,
       subTopicId: props.flashcard.subTopicId,
       imageUrl: props.flashcard.imageUrl,
@@ -41,7 +51,7 @@ const EditFlashcard = (props: IProps) => {
 
   const handleClose = () => setOpen(false);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: FlashcardFormValues) => {
     setLoading(true);
     const success = await updateFlashcard({
       ...values,

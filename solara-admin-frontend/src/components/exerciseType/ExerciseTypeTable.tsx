@@ -1,5 +1,5 @@
 import { Table, Space, Button } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { exerciseTypeApi } from '../../utils/axios/exerciseTypeApi';
 import CreateExerciseType from './CreateExerciseType';
 import EditExerciseType from './EditExerciseType';
@@ -30,15 +30,14 @@ const ExerciseTypeTable = () => {
   const [query, setQuery] = useState<IPageRequest>({
     page: 1,
     size: 10,
-    search: '',
-    orderOn: '',
-    isAscending: true
+    isAscending: true,
+    orderOn: ''
   });
 
-  const fetchExerciseTypes = async () => {
+  const fetchExerciseTypes = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await exerciseTypeApi.getExerciseTypes(query);
+      const response = await exerciseTypeApi.getExerciseTypes();
       if (response.isSuccess) {
         setExerciseTypes(response.responseRequest.items);
         setPagination({
@@ -53,11 +52,11 @@ const ExerciseTypeTable = () => {
       console.error('Failed to fetch exercise types:', error);
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     fetchExerciseTypes();
-  }, [query]);
+  }, [query, fetchExerciseTypes]);
 
   const columns = [
     {

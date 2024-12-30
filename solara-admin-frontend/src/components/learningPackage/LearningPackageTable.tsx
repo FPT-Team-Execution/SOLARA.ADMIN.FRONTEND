@@ -22,7 +22,7 @@ const LearningPackageTable = ({ data, loading, onEdit, onRefresh }: Props) => {
         message.success('Package validity updated successfully');
         onRefresh();
       }
-    } catch (error) {
+    } catch {
       message.error('Failed to update package validity');
     }
     setUpdatingValidity(null);
@@ -60,7 +60,7 @@ const LearningPackageTable = ({ data, loading, onEdit, onRefresh }: Props) => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record: LearningPackage) => (
+      render: (_: unknown, record: LearningPackage) => (
         <Space>
           <Button
             type="primary"

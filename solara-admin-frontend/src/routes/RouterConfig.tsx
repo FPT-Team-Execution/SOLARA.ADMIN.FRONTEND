@@ -1,7 +1,5 @@
 import { Navigate, createBrowserRouter, useParams } from 'react-router-dom'
-import PrivateRoute from './PrivateRoute'
 import Dashboard from '../pages/dashboard'
-import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 import Topic from "../pages/topic/topicPage.tsx";
 import CollectionPage from "../pages/topic/collection/collectionPage.tsx"
 import Flashcard from "../pages/topic/collection/exercise/flashcardPage.tsx"

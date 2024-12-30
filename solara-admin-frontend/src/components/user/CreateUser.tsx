@@ -4,10 +4,10 @@ import { UpdateUserRequest } from '../../types/user';
 import { PlusOutlined } from '@ant-design/icons';
 
 interface Props {
-    onSuccess: () => void;
+    handleReloadTable: () => void;
 }
 
-const CreateUser = ({ onSuccess }: Props) => {
+const CreateUser: React.FC<Props> = ({ handleReloadTable }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [form] = Form.useForm();
 
@@ -19,7 +19,7 @@ const CreateUser = ({ onSuccess }: Props) => {
                 body: JSON.stringify(values)
             });
             if (response.ok) {
-                onSuccess();
+                handleReloadTable();
                 setIsOpen(false);
                 form.resetFields();
             }

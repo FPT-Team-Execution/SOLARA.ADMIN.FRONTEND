@@ -19,7 +19,7 @@ const LearningPackagePage = () => {
       if (response.isSuccess) {
         setPackages(response.data);
       }
-    } catch (error) {
+    } catch {
       message.error('Failed to fetch learning packages');
     }
     setLoading(false);

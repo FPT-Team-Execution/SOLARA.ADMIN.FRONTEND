@@ -2,7 +2,7 @@ import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
 import { Button, Modal, Input, Form, InputNumber, Select, Switch, message } from "antd"
 import TextArea from "antd/es/input/TextArea"
 import { useRequest } from "ahooks"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { flashcardApi } from "../../utils/axios/flashcardApi"
 import { exerciseTypeApi } from "../../utils/axios/exerciseTypeApi"
 
@@ -40,11 +40,26 @@ const CreateFlashcard = (props: IProps) => {
   const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
   const [exerciseTypesLoading, setExerciseTypesLoading] = useState(false);
 
+  const fetchExerciseTypes = useCallback(async () => {
+    try {
+      setExerciseTypesLoading(true);
+      const response = await exerciseTypeApi.getExerciseTypes();
+      if (response?.isSuccess) {
+        const types = response.responseRequest.items || [];
+        setExerciseTypes(types);
+      }
+    } catch (error) {
+      console.error('Failed to fetch exercise types:', error);
+    } finally {
+      setExerciseTypesLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (open) {
       fetchExerciseTypes();
     }
-  }, [open]);
+  }, [open, fetchExerciseTypes]);
 
   useEffect(() => {
     if (open) {
@@ -52,24 +67,7 @@ const CreateFlashcard = (props: IProps) => {
         subTopicId: props.subTopicId
       });
     }
-  }, [open, props.subTopicId]);
-
-  const fetchExerciseTypes = async () => {
-    try {
-      setExerciseTypesLoading(true);
-      const response = await exerciseTypeApi.getExerciseTypes();
-      if (response?.isSuccess) {
-        const types = response.responseRequest.items || [];
-
-        setExerciseTypes(types);
-      }
-
-    } catch (error) {
-      console.error('Failed to fetch exercise types:', error);
-    } finally {
-      setExerciseTypesLoading(false);
-    }
-  };
+  }, [open, props.subTopicId, form]);
 
   const difficultyOptions = [
     { label: 'Easy', value: 'Easy' },

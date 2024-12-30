@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Table, Card, Input, Select, DatePicker, Button, Row, Col } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import axios from 'axios';
 
 interface Order {
@@ -27,7 +27,7 @@ const OrderStatus = {
     Pending: 'Pending',
     Completed: 'Completed',
     Cancelled: 'Cancelled',
-};
+} as const;
 
 export const Orders = () => {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -73,7 +73,7 @@ export const Orders = () => {
         },
     ];
 
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
             const params = new URLSearchParams({
@@ -96,17 +96,20 @@ export const Orders = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [pagination, status, beginDate, endDate, searchKey]);
 
     useEffect(() => {
         fetchOrders();
-    }, [pagination.current, pagination.pageSize, status, beginDate, endDate, searchKey]);
+    }, [fetchOrders]);
 
-    const handleTableChange = (pagination: any) => {
-        setPagination(pagination);
+    const handleTableChange = (newPagination: TablePaginationConfig) => {
+        setPagination({
+            current: newPagination.current || 1,
+            pageSize: newPagination.pageSize || 10,
+        });
     };
 
-    const handleDateRangeChange = (_: any, dateStrings: [string, string]) => {
+    const handleDateRangeChange = (_: unknown, dateStrings: [string, string]) => {
         setBeginDate(dateStrings[0]);
         setEndDate(dateStrings[1]);
     };
@@ -133,7 +136,7 @@ export const Orders = () => {
                         style={{ width: '100%' }}
                         value={status}
                         onChange={setStatus}
-                        options={Object.entries(OrderStatus).map(([key, value]) => ({
+                        options={Object.values(OrderStatus).map((value) => ({
                             label: value,
                             value: value,
                         }))}

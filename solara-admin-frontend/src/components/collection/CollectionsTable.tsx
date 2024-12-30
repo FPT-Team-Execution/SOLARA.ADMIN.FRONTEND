@@ -25,13 +25,13 @@ const CollectionsTable = (props: IProps) => {
         if (props.topicId) {
             fetchCollections(props.topicId)
         }
-    }, [props.topicId])
+    }, [props.topicId, fetchCollections])
 
     useEffect(() => {
         if (props.topicId && query) {
             fetchCollections(props.topicId)
         }
-    }, [query])
+    }, [query, props.topicId, fetchCollections])
 
     const updateQuery = (key: keyof IPageRequest, value: string | number | boolean) => {
         setQuery({...query, [key]: value})

@@ -6,10 +6,10 @@ import dayjs from 'dayjs';
 
 interface Props {
     user: UserDto;
-    onSuccess: () => void;
+    handleReloadTable: () => void;
 }
 
-const EditUser = ({ user, onSuccess }: Props) => {
+const EditUser: React.FC<Props> = ({ user, handleReloadTable }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [form] = Form.useForm();
 
@@ -20,11 +20,11 @@ const EditUser = ({ user, onSuccess }: Props) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...values,
-                    clerkUserId: user.id
+                    clerkUserId: user.userId
                 })
             });
             if (response.ok) {
-                onSuccess();
+                handleReloadTable();
                 setIsOpen(false);
             }
         } catch (error) {
