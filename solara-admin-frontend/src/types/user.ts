@@ -12,6 +12,7 @@ export type UserDto = {
     avatarUrl: string;
     createdOn?: Date | null;
     updatedOn?: Date | null;
+    roleName: string;
 }
 
 export type UserResModel = {

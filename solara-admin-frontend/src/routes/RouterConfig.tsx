@@ -11,6 +11,7 @@ import FlashcardsTable from '../components/flashcard/FlashcardsTable.tsx';
 import MainLayout from '../layouts/MainLayout';
 import ExerciseTypePage from '../pages/exerciseType/ExerciseTypePage';
 import LearningPackagePage from '../pages/learningPackage/LearningPackagePage';
+import Orders from "../components/dashboard/Orders.tsx";
 
 const FlashcardsView = () => {
     const { subTopicId } = useParams();
@@ -43,6 +44,13 @@ export const Routes = createBrowserRouter([
                 element: <Dashboard />,
                 handle: {
                     crumb: () => 'Dashboard'
+                }
+            },
+            {
+                path: PATH_ADMIN.orders,
+                element: <Orders />,
+                handle: {
+                    crumb: () => 'Orders'
                 }
             },
             {

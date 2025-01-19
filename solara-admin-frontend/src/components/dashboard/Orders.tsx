@@ -2,22 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Table, Card, Input, Select, DatePicker, Button, Row, Col } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
-import axios from 'axios';
-
-interface Order {
-    id: string;
-    userId: string;
-    status: string;
-    createdAt: string;
-    totalAmount: number;
-}
-
-interface OrdersResponse {
-    items: Order[];
-    totalCount: number;
-    pageSize: number;
-    currentPage: number;
-}
+import { orderApi, OrderDto } from "../../utils/axios/orderApi.ts";
+import { IPageRequest } from "../../types/general.type.ts";
 
 const { Search } = Input;
 const { RangePicker } = DatePicker;
@@ -30,23 +16,27 @@ const OrderStatus = {
 } as const;
 
 export const Orders = () => {
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [orders, setOrders] = useState<OrderDto[]>([]);
     const [loading, setLoading] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
     const [status, setStatus] = useState('All');
-    const [beginDate, setBeginDate] = useState<string>('');
-    const [endDate, setEndDate] = useState<string>('');
     const [searchKey, setSearchKey] = useState('');
+    const [dateRange, setDateRange] = useState<[string, string] | undefined>();
     const [pagination, setPagination] = useState({
         current: 1,
         pageSize: 10,
     });
 
-    const columns: ColumnsType<Order> = [
+    const columns: ColumnsType<OrderDto> = [
         {
             title: 'Order ID',
             dataIndex: 'id',
             key: 'id',
+        },
+        {
+            title: 'Order Code',
+            dataIndex: 'orderCode',
+            key: 'orderCode',
         },
         {
             title: 'User ID',
@@ -54,9 +44,19 @@ export const Orders = () => {
             key: 'userId',
         },
         {
+            title: 'Learning Package',
+            dataIndex: 'learningPackageName',
+            key: 'learningPackageName',
+        },
+        {
+            title: 'Payment Status',
+            dataIndex: 'paymentStatus',
+            key: 'paymentStatus',
+        },
+        {
             title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'orderStatus',
+            key: 'orderStatus',
         },
         {
             title: 'Created At',
@@ -66,37 +66,33 @@ export const Orders = () => {
         },
         {
             title: 'Total Amount',
-            dataIndex: 'totalAmount',
-            key: 'totalAmount',
+            dataIndex: 'total',
+            key: 'total',
             align: 'right',
-            render: (amount: number) => `$${amount.toFixed(2)}`,
+            render: (amount: number) => `${amount.toLocaleString()} VND`,
         },
     ];
 
     const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({
-                Page: pagination.current.toString(),
-                Size: pagination.pageSize.toString(),
-                ...(status !== 'All' && { OrderStatus: status }),
-                ...(beginDate && { BeginDate: beginDate }),
-                ...(endDate && { EndDate: endDate }),
-                ...(searchKey && { SearchKey: searchKey }),
-            });
+            const params: IPageRequest = {
+                page: pagination.current,
+                size: pagination.pageSize,
+                ...(searchKey && { search: searchKey }),
+                ...(status !== 'All' && { status }),
+                ...(dateRange && { startDate: dateRange[0], endDate: dateRange[1] }),
+            };
 
-            const response = await axios.get<OrdersResponse>(
-                `http://localhost:5055/api/orders?${params.toString()}`
-            );
-
-            setOrders(response.data.items);
-            setTotalCount(response.data.totalCount);
+            const response = await orderApi.getOrders(params);
+            setOrders(response.responseRequest?.items || []); // API trả `items`
+            setTotalCount(response.responseRequest?.total || 0); // API trả `total`
         } catch (error) {
-            console.error('Error fetching orders:', error);
+            console.error('Failed to fetch orders:', error);
         } finally {
             setLoading(false);
         }
-    }, [pagination, status, beginDate, endDate, searchKey]);
+    }, [pagination, searchKey, status, dateRange]);
 
     useEffect(() => {
         fetchOrders();
@@ -110,8 +106,7 @@ export const Orders = () => {
     };
 
     const handleDateRangeChange = (_: unknown, dateStrings: [string, string]) => {
-        setBeginDate(dateStrings[0]);
-        setEndDate(dateStrings[1]);
+        setDateRange(dateStrings);
     };
 
     return (
@@ -129,6 +124,7 @@ export const Orders = () => {
                         placeholder="Search orders"
                         value={searchKey}
                         onChange={(e) => setSearchKey(e.target.value)}
+                        onSearch={() => fetchOrders()}
                     />
                 </Col>
                 <Col xs={24} sm={12} md={6}>
@@ -158,7 +154,6 @@ export const Orders = () => {
                     ...pagination,
                     total: totalCount,
                     showSizeChanger: true,
-                    showTotal: (total) => `Total ${total} items`,
                 }}
                 loading={loading}
                 onChange={handleTableChange}

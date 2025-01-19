@@ -1,17 +1,9 @@
 import { Button, Modal, Form, Switch, message } from 'antd';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { useRequest } from 'ahooks';
 import { flashcardApi } from '../../utils/axios/flashcardApi';
 import TextArea from 'antd/es/input/TextArea';
 import { AnswerDto } from '../../types/exercise';
-
-interface Option {
-  id: string;
-  optionText: string;
-  explanation: string;
-  isCorrect: boolean;
-}
 
 interface IProps {
   exerciseId: string;
@@ -22,120 +14,105 @@ interface IProps {
 const ManageOptions = ({ exerciseId, onOptionsUpdate }: IProps) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const [existingOptions, setExistingOptions] = useState<Option[]>([]);
+  const [options, setOptions] = useState<AnswerDto[]>([]);
   const [loading, setLoading] = useState(false);
-  const [updatingOptionId, setUpdatingOptionId] = useState<string | null>(null);
-  const [deletingOptionId, setDeletingOptionId] = useState<string | null>(null);
+  const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
 
-  const refreshOptions = useCallback(async () => {
+  const refreshOptions = async () => {
     setLoading(true);
     try {
       const response = await flashcardApi.getExercise(exerciseId);
       if (response.isSuccess) {
-        const options = response.responseRequest.ans.map(answer => ({
+        const options = response.responseRequest.ans.map((answer: AnswerDto) => ({
           id: answer.id,
           optionText: answer.optionText,
           explanation: answer.explanation,
-          isCorrect: answer.isCorrect || false
+          isCorrect: answer.isCorrect,
         }));
-        setExistingOptions(options);
+        setOptions(options);
         onOptionsUpdate();
+      } else {
+        message.error('Failed to load options');
       }
+    } catch (error) {
+      message.error('Error fetching options' + error);
     } finally {
       setLoading(false);
     }
-  }, [exerciseId, onOptionsUpdate]);
+  };
 
   useEffect(() => {
     if (open) {
       refreshOptions();
     }
-  }, [open, refreshOptions]);
+  }, [open]);
 
-  const { loading: addLoading, run: addOption } = useRequest(
-    async (values: { optionText: string; explanation: string; isCorrect: boolean }) => {
-      try {
-        const response = await flashcardApi.postOption(exerciseId, {
-          optionText: values.optionText,
-          explanation: values.explanation,
-          isCorrect: values.isCorrect || false
-        });
-        
-        if (response.isSuccess) {
-          message.success('Option added successfully');
-          form.resetFields();
-          await refreshOptions();
-        }
-      } catch {
+  const handleAddOption = async (values: AnswerDto) => {
+    try {
+      const response = await flashcardApi.postOption(exerciseId, values);
+      if (response.isSuccess) {
+        message.success('Option added successfully');
+        form.resetFields();
+        refreshOptions();
+      } else {
         message.error('Failed to add option');
       }
-    },
-    { manual: true }
-  );
+    } catch (error) {
+      message.error('Error adding option' + error);
+    }
+  };
 
-  interface OptionFormValues {
-    optionText: string;
-    explanation: string;
-    isCorrect: boolean;
-  }
-
-  const handleUpdateOption = async (optionId: string, values: OptionFormValues) => {
-    setUpdatingOptionId(optionId);
+  const handleUpdateOption = async (optionId: string, values: AnswerDto) => {
+    setActiveOptionId(optionId);
     try {
-      const response = await flashcardApi.putOption(exerciseId, optionId, {
-        optionText: values.optionText,
-        explanation: values.explanation,
-        isCorrect: values.isCorrect || false
-      });
-      
+      const response = await flashcardApi.putOption(exerciseId, optionId, values);
       if (response.isSuccess) {
         message.success('Option updated successfully');
-        await refreshOptions();
+        refreshOptions();
+      } else {
+        message.error('Failed to update option');
       }
-    } catch {
-      message.error('Failed to update option');
+    } catch (error) {
+      message.error('Error updating option' + error);
     } finally {
-      setUpdatingOptionId(null);
+      setActiveOptionId(null);
     }
   };
 
   const handleDeleteOption = async (optionId: string) => {
-    setDeletingOptionId(optionId);
+    setActiveOptionId(optionId);
     try {
       const response = await flashcardApi.deleteOption(exerciseId, optionId);
       if (response.isSuccess) {
         message.success('Option deleted successfully');
-        await refreshOptions();
+        refreshOptions();
+      } else {
+        message.error('Failed to delete option');
       }
-    } catch {
-      message.error('Failed to delete option');
+    } catch (error) {
+      message.error('Error deleting option'+ error);
     } finally {
-      setDeletingOptionId(null);
+      setActiveOptionId(null);
     }
-  };
-
-  const handleAddOption = async (values: OptionFormValues) => {
-    await addOption(values);
   };
 
   return (
     <>
       <Button type="primary" onClick={() => setOpen(true)} icon={<PlusOutlined />}>
-        
       </Button>
 
       <Modal
         open={open}
         title="Manage Answer Options"
         onCancel={() => setOpen(false)}
-        width={800}
+        width={1200}
         footer={null}
       >
-        <div className="mb-4">
-          <h3 className="font-bold mb-2">Add New Option</h3>
-          <Form 
-            form={form} 
-            onFinish={handleAddOption} 
+        <div>
+          <h3>Add New Option</h3>
+          <Form
+            form={form}
+            onFinish={handleAddOption}
             layout="vertical"
             initialValues={{ isCorrect: false }}
           >
@@ -153,29 +130,21 @@ const ManageOptions = ({ exerciseId, onOptionsUpdate }: IProps) => {
             >
               <TextArea rows={2} />
             </Form.Item>
-            <Form.Item
-              name="isCorrect"
-              valuePropName="checked"
-            >
+            <Form.Item name="isCorrect" valuePropName="checked">
               <Switch checkedChildren="Correct" unCheckedChildren="Incorrect" />
             </Form.Item>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              loading={addLoading}
-              className="bg-blue-500"
-            >
+            <Button type="primary" htmlType="submit" loading={loading}>
               Add Option
             </Button>
           </Form>
         </div>
 
-        <div>
-          <h3 className="font-bold mb-2">Existing Options</h3>
+        <div className="mt-4">
+          <h3>Existing Options</h3>
           {loading ? (
             <div>Loading options...</div>
           ) : (
-            existingOptions.map((option) => (
+            options.map((option) => (
               <div key={option.id} className="border p-4 mb-4 rounded">
                 <Form
                   initialValues={option}
@@ -185,36 +154,32 @@ const ManageOptions = ({ exerciseId, onOptionsUpdate }: IProps) => {
                   <Form.Item
                     name="optionText"
                     label="Option Text"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: 'Please input option text!' }]}
                   >
                     <TextArea rows={2} />
                   </Form.Item>
                   <Form.Item
                     name="explanation"
                     label="Explanation"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: 'Please input explanation!' }]}
                   >
                     <TextArea rows={2} />
                   </Form.Item>
-                  <Form.Item
-                    name="isCorrect"
-                    valuePropName="checked"
-                  >
+                  <Form.Item name="isCorrect" valuePropName="checked" initialValue={option.isCorrect}>
                     <Switch checkedChildren="Correct" unCheckedChildren="Incorrect" />
                   </Form.Item>
                   <div className="flex gap-2">
-                    <Button 
-                      type="primary" 
-                      htmlType="submit" 
-                      loading={updatingOptionId === option.id}
-                      className="bg-blue-500"
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      loading={activeOptionId === option.id}
                     >
                       Update
                     </Button>
-                    <Button 
-                      danger 
+                    <Button
+                      danger
                       onClick={() => handleDeleteOption(option.id)}
-                      loading={deletingOptionId === option.id}
+                      loading={activeOptionId === option.id}
                     >
                       Delete
                     </Button>
@@ -229,4 +194,4 @@ const ManageOptions = ({ exerciseId, onOptionsUpdate }: IProps) => {
   );
 };
 
-export default ManageOptions; 
+export default ManageOptions;

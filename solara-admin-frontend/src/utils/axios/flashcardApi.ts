@@ -2,26 +2,27 @@ import axiosInstance from "./axiosInstance"
 import { ApiResponse } from '../../types/general.type';
 
 interface FlashcardRequest {
-  exerciseId?: string
-  subTopicId: string
-  xp: number
-  question: string
-  imageUrl?: string
-  videoUrl?: string
-  difficulty: string
-  exerciseTypeId?: string
-  answers?: {
-    optionText: string
-    explanation: string
-    isCorrect: boolean
-  }[]
-}
+    exerciseId?: string;
+    subTopicId: string;
+    xp: number;
+    question: string;
+    image?: File;
+    videoUrl?: string;
+    difficulty: string;
+    exerciseTypeId?: string;
+    answers?: {
+      optionText: string;
+      explanation: string;
+      isCorrect: boolean;
+    }[];
+  }
 
 
 interface Option {
-  optionText: string;
-  explanation: string;
-  isCorrect: boolean;
+    optionText: string;
+    explanation?: string;
+    createOn?: Date;
+    isCorrect: boolean;
 }
 
 interface OptionResponse {
@@ -42,15 +43,20 @@ interface ExerciseResponse {
 }
 
 export const flashcardApi = {
-    getFlashcards: async (subTopicId: string) => {
-        const response = await axiosInstance.get(`/api/v1/exercises/sub-topic/${subTopicId}`)
+    getFlashcards: async (subTopicId: string, page: number, size: number) => {
+        const response = await axiosInstance.get(`/api/v1/exercises/sub-topic/${subTopicId}?page=${page}&size=${size}`)
         return response.data
     },
 
-    postFlashcard: async (request: FlashcardRequest) => {
-        const response = await axiosInstance.post('/api/v1/exercises', request)
+    postFlashcard: async (request: FormData) => {
+        // Sửa thành FormData và header
+        const response = await axiosInstance.post("/api/v1/exercises", request, {
+            headers: {
+            "Content-Type": "multipart/form-data",
+            },
+        });
         console.log(request);
-        return response.data
+        return response.data;
     },
 
     putFlashcard: async (request: FlashcardRequest) => {

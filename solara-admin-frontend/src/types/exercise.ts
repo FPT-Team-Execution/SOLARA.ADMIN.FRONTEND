@@ -5,6 +5,7 @@ export type AnswerDto = {
     optionText: string;
     explanation?: string;
     createOn?: Date;
+    isCorrect: boolean;
 };
 
 

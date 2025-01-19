@@ -28,8 +28,8 @@ interface FlashcardState {
   query: IPageRequest
   setQuery: (query: IPageRequest) => void
   setSelectedFlashcard: (flashcard: ExerciseDto | null) => void
-  fetchFlashcards: (subTopicId: string) => Promise<void>
-  createFlashcard: (request: FlashcardRequest) => Promise<boolean>
+  fetchFlashcards: (subTopicId: string, page: number, size: number) => Promise<void>
+  createFlashcard: (request: FormData) => Promise<boolean>
   updateFlashcard: (request: FlashcardRequest) => Promise<boolean>
   deleteFlashcard: (id: string) => Promise<boolean>
   currentTopic: {
@@ -62,15 +62,15 @@ export const useFlashcardStore = create<FlashcardState>((set) => ({
   setQuery: (query) => set({ query }),
   setSelectedFlashcard: (flashcard) => set({ selectedFlashcard: flashcard }),
 
-  fetchFlashcards: async (subTopicId: string) => {
+  fetchFlashcards: async (subTopicId: string, page: number, size: number) => {
     set({ loading: true })
     try {
-      const response = await flashcardApi.getFlashcards(subTopicId)
+      const response = await flashcardApi.getFlashcards(subTopicId, page, size)
       set({
         flashcards: response.responseRequest?.items || [],
-        pagination: response.responseRequest,
-        loading: false
-      })
+        pagination: response.responseRequest || { items: [], total: 0 },
+        loading: false,
+      });
     } catch (error) {
       set({ loading: false })
       console.error('Error fetching flashcards:', error)

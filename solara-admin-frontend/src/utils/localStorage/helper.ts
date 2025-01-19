@@ -11,8 +11,7 @@ export const getLocalStorage = (key: string) => {
     try {
         const data = JSON.parse(window.localStorage.getItem(key) ?? '')
         if (data) return data
-    } catch (error) {
-        console.log(error);
+    } catch  {
         return window.localStorage.getItem(key)
     }
 }

@@ -5,6 +5,7 @@ export const PATH_PUBLIC = {
 export const PATH_ADMIN = {
     root: '/',
     dashboard: '/dashboard',
+    orders: '/orders',
     topic: '/topic',
     collection: '/collection',
     exercise: '/exercise',

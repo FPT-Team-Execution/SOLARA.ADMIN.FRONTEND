@@ -1,11 +1,23 @@
-import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
-import { Button, Modal, Input, Form, InputNumber, Select, Switch, message } from "antd"
-import TextArea from "antd/es/input/TextArea"
-import { useRequest } from "ahooks"
-import { useState, useEffect, useCallback } from "react"
-import { flashcardApi } from "../../utils/axios/flashcardApi"
-import { exerciseTypeApi } from "../../utils/axios/exerciseTypeApi"
-
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Modal,
+  Input,
+  Form,
+  InputNumber,
+  Select,
+  Switch,
+  message,
+  Upload,
+} from "antd";
+import TextArea from "antd/es/input/TextArea";
+import { useRequest } from "ahooks";
+import { useState, useEffect, useCallback } from "react";
+import { flashcardApi } from "../../utils/axios/flashcardApi";
+import { exerciseTypeApi } from "../../utils/axios/exerciseTypeApi";
+import { RcFile } from "antd/es/upload";
+import { UploadChangeParam } from "antd/es/upload";
+import { UploadFile, UploadProps } from "antd/es/upload/interface";
 interface Answer {
   optionText: string;
   explanation: string;
@@ -16,7 +28,7 @@ interface CreateExerciseRequest {
   subTopicId: string;
   xp: number;
   question: string;
-  imageUrl?: string;
+  image?: RcFile;
   videoUrl?: string;
   difficulty: string;
   exerciseTypeId: string;
@@ -30,8 +42,8 @@ interface ExerciseType {
 }
 
 interface IProps {
-  subTopicId: string
-  handleReloadTable: () => void
+  subTopicId: string;
+  handleReloadTable: () => void;
 }
 
 const CreateFlashcard = (props: IProps) => {
@@ -39,6 +51,7 @@ const CreateFlashcard = (props: IProps) => {
   const [open, setOpen] = useState(false);
   const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
   const [exerciseTypesLoading, setExerciseTypesLoading] = useState(false);
+  const [fileList, setFileList] = useState<RcFile[]>([]);
 
   const fetchExerciseTypes = useCallback(async () => {
     try {
@@ -49,7 +62,7 @@ const CreateFlashcard = (props: IProps) => {
         setExerciseTypes(types);
       }
     } catch (error) {
-      console.error('Failed to fetch exercise types:', error);
+      console.error("Failed to fetch exercise types:", error);
     } finally {
       setExerciseTypesLoading(false);
     }
@@ -64,50 +77,109 @@ const CreateFlashcard = (props: IProps) => {
   useEffect(() => {
     if (open) {
       form.setFieldsValue({
-        subTopicId: props.subTopicId
+        subTopicId: props.subTopicId,
       });
     }
   }, [open, props.subTopicId, form]);
 
   const difficultyOptions = [
-    { label: 'Easy', value: 'Easy' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'Hard', value: 'Hard' }
+    { label: "Easy", value: "Easy" },
+    { label: "Medium", value: "Medium" },
+    { label: "Hard", value: "Hard" },
   ];
 
-  const { loading, run: postFlashcard } = useRequest(async (values: CreateExerciseRequest) => {
-    const response = await flashcardApi.postFlashcard(values);
-    if (response.isSuccess == true) {
-      form.resetFields();
-      setOpen(false);
-      props.handleReloadTable();
-      message.success('Exercise created successfully');
+  const { loading, run: postFlashcard } = useRequest(
+    async (data: FormData) => {
+      // Sửa thành FormData
+      const response = await flashcardApi.postFlashcard(data);
+      if (response.isSuccess == true) {
+        form.resetFields();
+        setFileList([]);
+        setOpen(false);
+        props.handleReloadTable();
+        message.success("Exercise created successfully");
+      }
+    },
+    {
+      manual: true,
     }
-  }, {
-    manual: true
-  });
+  );
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleSubmit = (values: CreateExerciseRequest) => {
-    const formattedValues = {
-      ...values,
-      answers: values.answers.map(answer => ({
-        ...answer,
-        isCorrect: answer.isCorrect || false
-      }))
-    };
-    postFlashcard(formattedValues);
+    const formData = new FormData(); // Tạo FormData object
+
+    // Thêm các trường vào formData
+    formData.append("subTopicId", values.subTopicId);
+    formData.append("xp", values.xp.toString());
+    formData.append("question", values.question);
+    if (values.image) {
+      formData.append("image", values.image);
+    }
+    if (values.videoUrl) {
+      formData.append("videoUrl", values.videoUrl);
+    }
+    formData.append("difficulty", values.difficulty);
+    formData.append("exerciseTypeId", values.exerciseTypeId);
+
+    // Thêm answers vào formData
+    values.answers.forEach((answer, index) => {
+      formData.append(`answers[${index}].optionText`, answer.optionText);
+      formData.append(`answers[${index}].explanation`, answer.explanation);
+      formData.append(
+        `answers[${index}].isCorrect`,
+        answer.isCorrect ? "true" : "false"
+      );
+    });
+
+    postFlashcard(formData);
+  };
+
+  const handleImageChange = (info: UploadChangeParam<UploadFile>) => {
+    let newFileList = [...info.fileList];
+    newFileList = newFileList.slice(-1);
+    newFileList = newFileList.map((file) => {
+      if (file.response) {
+        file.url = file.response.url;
+      }
+      return file;
+    });
+
+    setFileList(newFileList as RcFile[]); // Cast to RcFile[]
+    form.setFieldValue("image", info.file);
+  };
+
+  const uploadProps: UploadProps = {
+    onRemove: (file: UploadFile) => {
+      const index = fileList.indexOf(file as RcFile);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
+      form.setFieldValue("image", undefined);
+    },
+    beforeUpload: (file: RcFile) => {
+      setFileList([file]);
+      form.setFieldValue("image", file);
+      return false;
+    },
+    fileList,
+    onChange: handleImageChange,
   };
 
   return (
     <>
-      <Button className={'bg-green-600'} type="primary" onClick={handleOpen} icon={<PlusOutlined />}>
+      <Button
+        className={"bg-green-600"}
+        type="primary"
+        onClick={handleOpen}
+        icon={<PlusOutlined />}
+      >
         Create
       </Button>
       <Modal
         open={open}
-        title={'Create new exercise'}
+        title={"Create new exercise"}
         onCancel={handleClose}
         width={800}
         footer={[
@@ -120,7 +192,7 @@ const CreateFlashcard = (props: IProps) => {
           <Form.Item
             label="Question"
             name="question"
-            rules={[{ required: true, message: 'Please input the question!' }]}
+            rules={[{ required: true, message: "Please input the question!" }]}
           >
             <TextArea rows={2} />
           </Form.Item>
@@ -130,7 +202,9 @@ const CreateFlashcard = (props: IProps) => {
               className="w-1/2"
               label="Difficulty"
               name="difficulty"
-              rules={[{ required: true, message: 'Please select difficulty!' }]}
+              rules={[
+                { required: true, message: "Please select difficulty!" },
+              ]}
             >
               <Select options={difficultyOptions} />
             </Form.Item>
@@ -139,7 +213,7 @@ const CreateFlashcard = (props: IProps) => {
               className="w-1/2"
               label="XP"
               name="xp"
-              rules={[{ required: true, message: 'Please input XP!' }]}
+              rules={[{ required: true, message: "Please input XP!" }]}
             >
               <InputNumber min={0} className="w-full" />
             </Form.Item>
@@ -148,10 +222,12 @@ const CreateFlashcard = (props: IProps) => {
           <Form.Item
             label="Exercise Type"
             name="exerciseTypeId"
-            rules={[{ required: true, message: 'Please select exercise type!' }]}
+            rules={[
+              { required: true, message: "Please select exercise type!" },
+            ]}
           >
             <Select loading={exerciseTypesLoading}>
-              {exerciseTypes.map(type => (
+              {exerciseTypes.map((type) => (
                 <Select.Option key={type.id} value={type.id}>
                   {type.name}
                 </Select.Option>
@@ -159,24 +235,17 @@ const CreateFlashcard = (props: IProps) => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="subTopicId"
-            hidden
-          >
+          <Form.Item name="subTopicId" hidden>
             <Input />
           </Form.Item>
 
-          <Form.Item
-            label="Image URL"
-            name="imageUrl"
-          >
-            <TextArea rows={2} />
+          <Form.Item label="Image" name="image">
+            <Upload {...uploadProps}>
+              <Button icon={<PlusOutlined />}>Select Image</Button>
+            </Upload>
           </Form.Item>
 
-          <Form.Item
-            label="Video URL"
-            name="videoUrl"
-          >
+          <Form.Item label="Video URL" name="videoUrl">
             <TextArea rows={2} />
           </Form.Item>
 
@@ -190,31 +259,43 @@ const CreateFlashcard = (props: IProps) => {
                       <div className="flex-1">
                         <Form.Item
                           {...restField}
-                          name={[name, 'optionText']}
-                          rules={[{ required: true, message: 'Missing option text' }]}
+                          name={[name, "optionText"]}
+                          rules={[
+                            { required: true, message: "Missing option text" },
+                          ]}
                         >
                           <TextArea placeholder="Answer option" rows={2} />
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          name={[name, 'explanation']}
-                          rules={[{ required: true, message: 'Missing explanation' }]}
+                          name={[name, "explanation"]}
+                          rules={[
+                            { required: true, message: "Missing explanation" },
+                          ]}
                         >
                           <TextArea placeholder="Explanation" rows={2} />
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          name={[name, 'isCorrect']}
+                          name={[name, "isCorrect"]}
                           valuePropName="checked"
                           initialValue={false}
                         >
-                          <Switch checkedChildren="Correct" unCheckedChildren="Incorrect" />
+                          <Switch
+                            checkedChildren="Correct"
+                            unCheckedChildren="Incorrect"
+                          />
                         </Form.Item>
                       </div>
                       <MinusCircleOutlined onClick={() => remove(name)} />
                     </div>
                   ))}
-                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
                     Add Answer
                   </Button>
                 </>
@@ -223,14 +304,19 @@ const CreateFlashcard = (props: IProps) => {
           </div>
 
           <Form.Item>
-            <Button loading={loading} className={'bg-green-600'} type="primary" htmlType="submit">
+            <Button
+              loading={loading}
+              className={"bg-green-600"}
+              type="primary"
+              htmlType="submit"
+            >
               Create
             </Button>
           </Form.Item>
         </Form>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default CreateFlashcard
+export default CreateFlashcard;

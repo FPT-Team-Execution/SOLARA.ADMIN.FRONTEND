@@ -20,7 +20,6 @@ function getSessionCookie() {
 axiosInstance.interceptors.request.use(
     (config) => {
       const token = getSessionCookie();
-      console.log(token);
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }

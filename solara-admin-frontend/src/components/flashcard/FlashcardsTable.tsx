@@ -2,7 +2,7 @@ import { ReloadOutlined, FileTextOutlined } from "@ant-design/icons";
 import { TableProps, Button, Table, Space } from "antd";
 import { useEffect } from "react";
 import { ExerciseDto } from "../../types/exercise";
-import { useFlashcardStore } from '../../stores/flashcardStore'
+import { useFlashcardStore } from '../../stores/flashcardStore';
 import FlashcardDetails from "./FlashcardDetails";
 import CreateFlashcard from "./CreateFlashcard";
 import DeleteFlashcard from "./DeleteFlashcard";
@@ -25,22 +25,21 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
     fetchFlashcards,
     setSelectedFlashcard,
     selectedFlashcard,
-  } = useFlashcardStore()
+  } = useFlashcardStore();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(subTopicId);
     if (subTopicId) {
-      fetchFlashcards(subTopicId)
+      fetchFlashcards(subTopicId, query.page, query.size);
     }
-  }, [query, subTopicId, fetchFlashcards])
+  }, [query, subTopicId, fetchFlashcards]);
 
   const handleReload = () => {
     if (subTopicId) {
-      fetchFlashcards(subTopicId)
+      fetchFlashcards(subTopicId, query.page, query.size);
     }
-  }
+  };
 
   const columns: TableProps<ExerciseDto>['columns'] = [
     {
@@ -48,25 +47,25 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
       dataIndex: 'no',
       key: 'no',
       render: (_, __, index: number) => index + 1,
-      width: '5%',
+      width: '2%',
     },
     {
       title: 'Question',
       dataIndex: 'question',
       key: 'question',
-      width: '40%',
+      width: '25%',
     },
     {
-      title: 'Difficulty',
+      title: 'Diff',
       dataIndex: 'difficulty',
       key: 'difficulty',
-      width: '15%',
+      width: '2%',
     },
     {
       title: 'XP',
       dataIndex: 'xp',
       key: 'xp',
-      width: '10%',
+      width: '2%',
     },
     {
       title: 'Type',
@@ -85,11 +84,11 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
             onOptionsUpdate={handleReload}
           />
           <EditFlashcard 
-            handleReloadTable={() => handleReload()} 
+            handleReloadTable={handleReload} 
             flashcard={record} 
           />
           <DeleteFlashcard 
-            handleReloadTable={() => handleReload()} 
+            handleReloadTable={handleReload} 
             flashcardId={record.id} 
           />
         </Space>
@@ -97,22 +96,24 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
     },
   ];
 
-  // Handle row click
   const handleRowClick = (record: ExerciseDto) => {
     setSelectedFlashcard(record);
   };
 
   return (
     <div className="container mx-auto px-4">
+      {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
+        {/* Query Section */}
         <div className="order-2 sm:order-1">
           <AppTableQuery 
             page={pagination} 
             query={query} 
-            updateQuery={(key, value) => setQuery({...query, [key]: value})}
+            updateQuery={(key, value) => setQuery({ ...query, [key]: value })}
           />
         </div>
 
+        {/* Action Buttons */}
         <div className="flex flex-wrap gap-2 order-1 sm:order-2">
           <Button 
             type="primary"
@@ -137,35 +138,36 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
         </div>
       </div>
 
-      <div>
-        <div className='flex flex-col lg:flex-row gap-6'>
-          <div className='w-full lg:w-8/12'>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <Table
-                loading={loading}
-                dataSource={flashcards}
-                columns={columns}
-                pagination={false}
-                onRow={(record) => ({
-                  onClick: () => handleRowClick(record),
-                  style: { 
-                    cursor: 'pointer',
-                    transition: 'background-color 0.3s',
-                  },
-                  className: 'hover:bg-gray-50'
-                })}
-                scroll={{ x: 'max-content' }}
-              />
-            </div>
+      {/* Main Content Section */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Flashcards Table */}
+        <div className="w-full lg:w-7/12">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <Table
+              loading={loading}
+              dataSource={flashcards}
+              columns={columns}
+              pagination={false}
+              onRow={(record) => ({
+                onClick: () => handleRowClick(record),
+                style: { 
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s',
+                },
+                className: 'hover:bg-gray-50',
+              })}
+              scroll={{ x: 'max-content' }}
+            />
           </div>
+        </div>
 
-          <div className="w-full lg:w-4/12">
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <FlashcardDetails 
-                handleReloadTable={handleReload} 
-                flashcard={selectedFlashcard}
-              />
-            </div>
+        {/* Flashcard Details */}
+        <div className="w-full lg:w-5/12">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <FlashcardDetails 
+              handleReloadTable={handleReload} 
+              flashcard={selectedFlashcard}
+            />
           </div>
         </div>
       </div>
@@ -173,4 +175,4 @@ const FlashcardsTable = ({ subTopicId }: IProps) => {
   );
 };
 
-export default FlashcardsTable
+export default FlashcardsTable;

@@ -24,7 +24,7 @@ export const userApi: IUserApi = {
     },
     postUser: async (request: CreateUserRequest) => {
         const response = await axiosClient.post<IBaseModel<UserResModel>>(USER_URL.GET_POS_PUT_DEL(), request);
-        if (response.data.isSuccess == true) notification.success({
+        if (response.data.isSuccess) notification.success({
             message: 'Success',
             description: messageHelper.createSucess("user")
         })
@@ -32,7 +32,7 @@ export const userApi: IUserApi = {
     },
     putUser: async (request: UpdateUserRequest) => {
         const response = await axiosClient.put<IBaseModel<UserResModel>>(USER_URL.GET_POS_PUT_DEL(), request);
-        if (response.data.isSuccess == true) notification.success({
+        if (response.data.isSuccess) notification.success({
             message: 'Success',
             description: messageHelper.updateSucess("user")
         })
@@ -40,7 +40,7 @@ export const userApi: IUserApi = {
     },
     deleteUser: async (id: string) => {
         const response = await axiosClient.delete<IBaseModel<UserDto>>(USER_URL.GET_POS_PUT_DEL(id));
-        if (response.data.isSuccess == true) notification.success({
+        if (response.data.isSuccess) notification.success({
             message: 'Success',
             description: messageHelper.deleteSucess("user")
         })

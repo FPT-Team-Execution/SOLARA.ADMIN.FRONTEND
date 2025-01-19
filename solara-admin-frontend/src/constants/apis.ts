@@ -1,5 +1,5 @@
 // Base 
-export const BASE_API = "http://localhost:5055/api/v1";
+export const BASE_API = "https://solara.cursus.id.vn/api/v1";
 
 // Authentication
 export const AUTH_CLERK_API = "/auth/clerk";
