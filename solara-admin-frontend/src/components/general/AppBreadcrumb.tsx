@@ -11,14 +11,13 @@ interface BRProps {
     items: BreadcrumbItem[]; // Accepts an array of breadcrumb items
 }
 
-const AppBreadcrumb: React.FC<BRProps> = ({ items }) => (
-    <Breadcrumb>
-        {items.map((item, index) => (
-            <Breadcrumb.Item key={index}>
-                {item.link ? <Link to={item.link}>{item.title}</Link> : item.title}
-            </Breadcrumb.Item>
-        ))}
-    </Breadcrumb>
-);
+const AppBreadcrumb: React.FC<BRProps> = ({ items }) => {
+    // Map the items array into the format required by the new `items` property
+    const breadcrumbItems = items.map((item) => ({
+        title: item.link ? <Link to={item.link}>{item.title}</Link> : item.title,
+    }));
+
+    return <Breadcrumb items={breadcrumbItems} />;
+};
 
 export default AppBreadcrumb;

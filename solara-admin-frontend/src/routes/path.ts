@@ -3,9 +3,14 @@ export const PATH_PUBLIC = {
 }
 
 export const PATH_ADMIN = {
+    root: '/',
     dashboard: '/dashboard',
+    orders: '/orders',
     topic: '/topic',
     collection: '/collection',
-    flashcard: '/flashcard',
-    user: '/user'
-}
+    exercise: '/exercise',
+    exerciseType: '/exercise-types',
+    subTopics: '/sub-topics',
+    user: '/user',
+    learningPackages: '/learning-packages'
+} as const;

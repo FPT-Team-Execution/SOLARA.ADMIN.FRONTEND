@@ -1,17 +1,21 @@
 import './App.css'
-import {ClerkProvider} from "@clerk/clerk-react";
-import AppRoute from "./routes";
+import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react"
+import AppRoute from "./routes"
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ?? ''
 
 function App() {
-  
   return (
-    <>
-      <ClerkProvider publishableKey={clerkPubKey}>
+    <ClerkProvider 
+      publishableKey={clerkPubKey}
+    >
+      <SignedIn>
         <AppRoute />
-      </ClerkProvider>
-    </>
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </ClerkProvider>
   )
 }
 

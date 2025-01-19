@@ -1,40 +1,114 @@
-import { FlashcardModel, FlashcardResModel, UpsertFlashcardReqModel } from "../../types/flashcard.type";
-import { BaseModel, BaseReModel, PageReqModel, PaginationResModel } from "../../types/general.type"
-import { FLASHCARD_URL } from "../url/flashcardUrl";
-import axiosClient from "./axiosClient";
+import axiosInstance from "./axiosInstance"
+import { ApiResponse } from '../../types/general.type';
 
-interface IFlashcardApi {
-    getFlashcards: (query: PageReqModel) => Promise<BaseReModel<PaginationResModel<FlashcardModel>>>;
-    getFlashcard: (id: string) => Promise<BaseReModel<FlashcardModel>>;
-    getOnCollection: (id: string, request: PageReqModel) => Promise<BaseReModel<PaginationResModel<FlashcardModel>>>;
-    postFlashcard: (request: UpsertFlashcardReqModel) => Promise<BaseReModel<FlashcardResModel>>;
-    putFlashcard: (id: string, request: UpsertFlashcardReqModel) => Promise<BaseReModel<FlashcardResModel>>;
-    deleteFlashcard: (id: string) => Promise<BaseModel>;
+interface FlashcardRequest {
+    exerciseId?: string;
+    subTopicId: string;
+    xp: number;
+    question: string;
+    image?: File;
+    videoUrl?: string;
+    difficulty: string;
+    exerciseTypeId?: string;
+    answers?: {
+      optionText: string;
+      explanation: string;
+      isCorrect: boolean;
+    }[];
+  }
+
+
+interface Option {
+    optionText: string;
+    explanation?: string;
+    createOn?: Date;
+    isCorrect: boolean;
 }
 
-export const flashcardApi: IFlashcardApi = {
-    getFlashcards: async (query: PageReqModel) => {
-        const response = await axiosClient.get<BaseReModel<PaginationResModel<FlashcardModel>>>(FLASHCARD_URL.GETS(query));
-        return response.data;
-    },
-    getFlashcard: async (id: string) => {
-        const response = await axiosClient.get<BaseReModel<FlashcardModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(id));
-        return response.data;
-    },
-    getOnCollection: async (id: string, request: PageReqModel) => {
-        const response = await axiosClient.get<BaseReModel<PaginationResModel<FlashcardModel>>>(FLASHCARD_URL.GET_ON_COLLECTION(id, request));
+interface OptionResponse {
+  id: string;
+  optionText: string;
+  explanation: string;
+  isCorrect: boolean;
+}
+
+interface ExerciseResponse {
+  id: string;
+  question: string;
+  difficulty: string;
+  xp: number;
+  imageUrl?: string;
+  videoUrl?: string;
+  ans: OptionResponse[];
+}
+
+export const flashcardApi = {
+    getFlashcards: async (subTopicId: string, page: number, size: number) => {
+        const response = await axiosInstance.get(`/api/v1/exercises/sub-topic/${subTopicId}?page=${page}&size=${size}`)
         return response.data
     },
-    postFlashcard: async (request: UpsertFlashcardReqModel) => {
-        const response = await axiosClient.post<BaseReModel<FlashcardResModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(), request);
+
+    postFlashcard: async (request: FormData) => {
+        // Sửa thành FormData và header
+        const response = await axiosInstance.post("/api/v1/exercises", request, {
+            headers: {
+            "Content-Type": "multipart/form-data",
+            },
+        });
+        console.log(request);
         return response.data;
     },
-    putFlashcard: async (id: string, request: UpsertFlashcardReqModel) => {
-        const response = await axiosClient.put<BaseReModel<FlashcardResModel>>(FLASHCARD_URL.GET_POS_PUT_DEL(id), request);
-        return response.data;
+
+    putFlashcard: async (request: FlashcardRequest) => {
+        const response = await axiosInstance.put('/api/v1/exercises', request)
+        return response.data
     },
+
     deleteFlashcard: async (id: string) => {
-        const response = await axiosClient.delete<BaseModel>(FLASHCARD_URL.GET_POS_PUT_DEL(id));
+        const response = await axiosInstance.delete(`/api/v1/exercises/${id}`)
+        return response.data
+    },
+
+    postOption: async (exerciseId: string, option: Option): Promise<ApiResponse<OptionResponse>> => {
+        const url = `/api/v1/exercises/${exerciseId}/options`;
+        console.log('API URL:', url);
+        console.log('Request data:', { exerciseId, option });
+        
+        try {
+            const response = await axiosInstance.post(url, option);
+            console.log('Raw response:', response);
+            return response.data;
+        } catch (error) {
+            console.error('API error:', error);
+            throw error;
+        }
+    },
+
+    putOption: async (exerciseId: string, optionId: string, option: Option): Promise<ApiResponse<OptionResponse>> => {
+        const response = await axiosInstance.put(
+            `/api/v1/exercises/${exerciseId}/options`,
+            {
+                optionId,
+                ...option
+            }
+        );
+        return response.data;
+    },
+
+    deleteOption: async (exerciseId: string, optionId: string): Promise<ApiResponse<void>> => {
+        const response = await axiosInstance.delete(
+            `/api/v1/exercises/${exerciseId}/options/${optionId}`
+        );
+        return response.data;
+    },
+
+    getOptions: async (exerciseId: string) => {
+        const response = await axiosInstance.get(`/api/v1/exercises/${exerciseId}/options`);
+        return response.data;
+    },
+
+    getExercise: async (exerciseId: string): Promise<ApiResponse<ExerciseResponse>> => {
+        const response = await axiosInstance.get(`/api/v1/exercises/${exerciseId}`);
         return response.data;
     }
 }

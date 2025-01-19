@@ -6,7 +6,8 @@ import {
     CodeSandboxOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    UserOutlined
+    UserOutlined,
+    UnorderedListOutlined
 } from '@ant-design/icons'
 import { UserButton } from '@clerk/clerk-react'
 import type { MenuProps } from 'antd'
@@ -33,10 +34,11 @@ const items: MenuItem[] = [
     getItem(<Link to={PATH_ADMIN.dashboard}>Dashboard</Link>, PATH_ADMIN.dashboard, <AppstoreOutlined />),
     getItem(<Link to={PATH_ADMIN.topic}>Topic</Link>, PATH_ADMIN.topic, <CodeSandboxOutlined />),
     getItem(<Link to={PATH_ADMIN.user}>User</Link>, PATH_ADMIN.user, <UserOutlined />),
+    getItem(<Link to={PATH_ADMIN.orders}>Orders</Link>, PATH_ADMIN.orders, <UnorderedListOutlined/>)
 ]
 
 const BaseLayout = ({ children }: PropsWithChildren) => {
-    const [pathActive, setPathActive] = useState([PATH_ADMIN.dashboard])
+    const [pathActive, setPathActive] = useState<string[]>([PATH_ADMIN.dashboard])
     const location = useLocation()
 
     useEffect(() => {

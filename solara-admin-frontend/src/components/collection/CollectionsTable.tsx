@@ -1,58 +1,47 @@
-import { useState } from "react"
-import CreateCollection from "./CreateCollection"
-import { CollectionModel } from "../../types/collection.type"
-import { PageReqModel, PageResModel } from "../../types/general.type"
-import { useRequest } from "ahooks"
-import { collectionApi } from "../../utils/axios/collectionApi"
 import { Button, Space, Table, TableProps } from "antd"
-// import { shortenString } from "../../utils/funcs/stringHelpers"
+import { ReloadOutlined } from "@ant-design/icons"
 import { formatDateTime } from "../../utils/funcs/datetimeHelper"
 import DeleteCollection from "./DeleteCollection"
 import EditCollection from "./EditCollection"
 import ShowFlashcard from "./ShowFlashcard"
-import { ReloadOutlined } from "@ant-design/icons"
 import AppTableQuery from "../general/AppTableQuery"
+import { SubTopicDto } from "../../types/subTopic"
+import { useCollectionStore } from "../../stores/collectionStore"
+import { useEffect } from "react"
+import CreateCollection from "./CreateCollection"
+import { IPageRequest } from "../../types/general.type"
 
 interface IProps {
-    topicId: string
+    topicId: string,
 }
 
 const CollectionsTable = (props: IProps) => {
+    const { collections, pagination, loading, query, setQuery, fetchCollections } = useCollectionStore()
+    
+    console.log('Collections:', collections) // Debug collections
+    console.log('Pagination:', pagination) // Debug pagination
 
-    const [collections, setCollections] = useState<CollectionModel[] | undefined>([]);
-    const [page, setPage] = useState<PageResModel>();
-    const [query, setQuery] = useState<PageReqModel>({
-        page: 1,
-        pageSize: 10,
-        sort: ""
-    });
+    useEffect(() => {
+        if (props.topicId) {
+            fetchCollections(props.topicId)
+        }
+    }, [props.topicId, fetchCollections])
 
-    const updateQuery = (key: keyof PageReqModel, value: string | number) => {
-        setQuery((prevQuery) => ({
-            ...prevQuery,
-            [key]: value,
-        }));
-    };
+    useEffect(() => {
+        if (props.topicId && query) {
+            fetchCollections(props.topicId)
+        }
+    }, [query, props.topicId, fetchCollections])
 
-    const { loading, refresh } = useRequest(async () => {
-        const response = await collectionApi.getOnTopic(props.topicId, query);
-        setCollections(response.responseRequest?.content);
-        setPage(response.responseRequest?.page);
-    }, {
-        refreshDeps: [query]
-    })
+    const updateQuery = (key: keyof IPageRequest, value: string | number | boolean) => {
+        setQuery({...query, [key]: value})
+    }
 
-    const columns: TableProps<CollectionModel>['columns'] = [
-        // {
-        //     title: 'Id',
-        //     dataIndex: 'collectionId',
-        //     key: 'collectionId',
-        //     render: (collectionId) => shortenString(collectionId)
-        // },
+    const columns: TableProps<SubTopicDto>['columns'] = [
         {
             title: 'Name',
-            dataIndex: 'collectionName',
-            key: 'collectionName',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Description',
@@ -61,38 +50,48 @@ const CollectionsTable = (props: IProps) => {
         },
         {
             title: 'Created At',
-            dataIndex: 'createAt',
-            key: 'createAt',
+            dataIndex: 'createdOn',
+            key: 'createdOn',
             render: (datetime) => formatDateTime(datetime)
         },
         {
             title: 'Action',
             key: 'action',
-            render: (record: CollectionModel) => (
+            render: (record: SubTopicDto) => (
                 <Space size="small">
-                    <ShowFlashcard collectionId={record.collectionId}></ShowFlashcard>
-                    <EditCollection topicId={props.topicId} collection={record} handleReloadTable={refresh}></EditCollection>
-                    <DeleteCollection id={record.collectionId} handleReloadTable={refresh}></DeleteCollection>
+                    <ShowFlashcard 
+                        id={record.id} 
+                        topicId={props.topicId}
+                    ></ShowFlashcard>
+                    <EditCollection 
+                        topicId={props.topicId} 
+                        collection={record} 
+                        handleReloadTable={() => fetchCollections(props.topicId)}
+                    ></EditCollection>
+                    <DeleteCollection 
+                        id={record.id} 
+                        handleReloadTable={() => fetchCollections(props.topicId)}
+                    ></DeleteCollection>
                 </Space>
             ),
         },
-    ];
+    ]
 
     return (
         <div>
             <div className="flex float-end space-x-2 p-4">
-                <Button type="dashed" onClick={refresh} icon={<ReloadOutlined />}>
+                <Button type="dashed" onClick={() => fetchCollections(props.topicId)} icon={<ReloadOutlined />}>
                     Reload
                 </Button>
-                <CreateCollection topicId={props.topicId} handleReloadTable={refresh} ></CreateCollection>
+                <CreateCollection topicId={props.topicId} handleReloadTable={() => fetchCollections(props.topicId)} />
             </div>
 
             <div className="flex float-start space-x-2 p-4">
-                <AppTableQuery page={page} query={query} updateQuery={updateQuery}></AppTableQuery>
+                <AppTableQuery page={pagination} query={query} updateQuery={updateQuery} />
             </div>
 
             <div>
-                <Table loading={loading} className="shadow" dataSource={collections} columns={columns} pagination={false} />
+                <Table loading={loading} className="shadow" dataSource={collections} columns={columns} pagination={false} rowKey={(record) => record.id} />
             </div>
         </div>
     )

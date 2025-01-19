@@ -2,47 +2,37 @@ import { EditOutlined } from "@ant-design/icons"
 import { Button, Modal, Input } from "antd"
 import TextArea from "antd/es/input/TextArea"
 import { Form } from "antd"
-import { CollectionModel, UpsertCollectionReqModel } from "../../types/collection.type"
+import { SubTopicDto, UpdateSubTopicRequest } from "../../types/subTopic"
+
 import { useState } from "react"
 import { useRequest } from "ahooks"
-import { collectionApi } from "../../utils/axios/collectionApi"
+import {collectionApi} from '../../utils/axios/collectionApi'
 
 interface IProps {
     topicId: string
-    collection: CollectionModel,
+    collection: SubTopicDto,
     handleReloadTable: () => void
 }
 
 const EditCollection = (props: IProps) => {
-    const [form] = Form.useForm<UpsertCollectionReqModel>();
+    const [form] = Form.useForm<UpdateSubTopicRequest>();
     const [open, setOpen] = useState(false);
 
     const setInitialFormValues = () => {
         form.setFieldsValue({
-            collectionName: props.collection.collectionName!,
+            name: props.collection.name!,
             description: props.collection.description!,
-            topicId: props.collection.topicId
+            topicId: props.collection.id
         })
     }
 
-    const { loading, run: putCollection } = useRequest(async (id: string, values: UpsertCollectionReqModel) => {
-        const request: UpsertCollectionReqModel = {
-            collectionName: values.collectionName,
-            description: values.description,
-            topicId: props.topicId
-        }
-        const response = await collectionApi.putCollection(id, request);
-        if (response.isSuccess == true) {
-            form.resetFields();
-            setOpen(false);
-            props.handleReloadTable();
+    const { loading, run: updateCollection } = useRequest(async (values: UpdateSubTopicRequest) => {
+        const response = await collectionApi.putCollection(props.collection.id, values)
+        if (response.data.isSuccess === true) {
+            props.handleReloadTable()
         }
     }, {
-        manual: true,
-        onError: () => {
-        },
-        onSuccess: () => {
-        }
+        manual: true
     })
 
     const handleOpen = async () => {
@@ -54,8 +44,8 @@ const EditCollection = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertCollectionReqModel) => {
-        putCollection(props.collection.collectionId, values)
+    const handleSubmit = async (values: UpdateSubTopicRequest) => {
+        updateCollection(values)
     };
 
     return (
@@ -77,7 +67,7 @@ const EditCollection = (props: IProps) => {
 
                         <Form.Item
                             label="Name"
-                            name="collectionName"
+                            name="name"
                             rules={[{ required: true, message: 'Please input the name!' }]}
                         >
                             <Input />

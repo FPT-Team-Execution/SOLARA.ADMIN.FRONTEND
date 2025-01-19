@@ -1,10 +1,9 @@
 import { Button, Form, Input, Modal } from "antd";
-import { UpsertCollectionReqModel } from "../../types/collection.type";
+import { UpdateSubTopicRequest } from "../../types/subTopic";
 import { useState } from "react";
-import { useRequest } from "ahooks";
 import TextArea from "antd/es/input/TextArea";
 import { PlusOutlined } from "@ant-design/icons";
-import { collectionApi } from "../../utils/axios/collectionApi";
+import { useCollectionStore } from "../../stores/collectionStore";
 
 interface IProps {
     topicId: string
@@ -12,39 +11,30 @@ interface IProps {
 }
 
 const CreateCollection = (props: IProps) => {
-    const [form] = Form.useForm<UpsertCollectionReqModel>();
+    const [form] = Form.useForm<UpdateSubTopicRequest>();
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const createCollection = useCollectionStore(state => state.createCollection);
 
-    const { loading, run: postCollection } = useRequest(async (values: UpsertCollectionReqModel) => {
-        const request: UpsertCollectionReqModel = {
-            collectionName: values.collectionName,
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const handleSubmit = async (values: UpdateSubTopicRequest) => {
+        setLoading(true);
+        const request: UpdateSubTopicRequest = {
+            name: values.name,
             description: values.description,
-            topicId: props.topicId
-        }
-        const response = await collectionApi.postCollection(request);
-        if (response.isSuccess == true) {
+            topicId: props.topicId,
+            subTopicId: values.subTopicId
+        };
+        
+        const success = await createCollection(request);
+        if (success) {
             form.resetFields();
             setOpen(false);
             props.handleReloadTable();
         }
-    }, {
-        manual: true,
-        onError: () => {
-        },
-        onSuccess: () => {
-        }
-    });
-
-    const handleOpen = async () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleSubmit = async (values: UpsertCollectionReqModel) => {
-        postCollection(values);
+        setLoading(false);
     };
 
     return (
@@ -66,7 +56,7 @@ const CreateCollection = (props: IProps) => {
                     <Form className={'w-full'} form={form} onFinish={handleSubmit} layout="vertical">
                         <Form.Item
                             label="Name"
-                            name="collectionName"
+                            name="name"
                             rules={[{ required: true, message: 'Please input the name!' }]}
                         >
                             <Input />

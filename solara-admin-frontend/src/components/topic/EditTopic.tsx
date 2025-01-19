@@ -1,27 +1,30 @@
 import { Button, Input, Modal } from 'antd'
 import { EditOutlined } from "@ant-design/icons";
 import { Form } from 'antd';
-import { TopicModel, UpsertTopicReqModel } from '../../types/topic.type';
+import { TopicDto, UpdateTopicRequest } from '../../types/topic.type';
 import { useState } from 'react';
 import { useRequest } from 'ahooks';
 import { topicApi } from '../../utils/axios/topicApi';
 import TextArea from 'antd/es/input/TextArea';
 
 interface IProps {
-    topic: TopicModel,
+    topic: TopicDto,
     handleReloadTable: () => void
 }
 
 const EditTopic = (props: IProps) => {
-    const [form] = Form.useForm<UpsertTopicReqModel>();
+    const [form] = Form.useForm<UpdateTopicRequest>();
     const [open, setOpen] = useState(false);
 
-    const { loading, run: putTopic } = useRequest(async (id: string, value: UpsertTopicReqModel) => {
-        const request: UpsertTopicReqModel = {
+    const { loading, run: putTopic } = useRequest(async (id:string, value: UpdateTopicRequest) => {
+        const request: UpdateTopicRequest = {
             topicName: value.topicName,
-            topicDescription: value.topicDescription
+            topicDescription: value.topicDescription,
+            topicId: id,
+            thumbnail: value.thumbnail
         }
-        const response = await topicApi.putTopic(id, request);
+
+        const response = await topicApi.putTopic(request);
         if (response.isSuccess == true) {
             form.resetFields();
             setOpen(false);
@@ -38,7 +41,8 @@ const EditTopic = (props: IProps) => {
     const setInitialFormValues = () => {
         form.setFieldsValue({
             topicName: props.topic.topicName!,
-            topicDescription: props.topic.description!
+            topicDescription: props.topic.description!,
+            thumbnail: props.topic.thumbnail
         })
     }
 
@@ -51,8 +55,8 @@ const EditTopic = (props: IProps) => {
         setOpen(false);
     };
 
-    const handleSubmit = async (values: UpsertTopicReqModel) => {
-        putTopic(props.topic.topicId, values)
+    const handleSubmit = async (values: UpdateTopicRequest) => {
+        putTopic(props.topic.topicId,values)
     };
 
     return (
@@ -85,6 +89,14 @@ const EditTopic = (props: IProps) => {
                             rules={[{ required: true, message: 'Please input the description!' }]}
                         >
                             <TextArea rows={4} />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Thumbnail"
+                            name="thumbnail"
+                            rules={[{ required: true, message: 'Please input the thumbnail URL!' }]}
+                        >
+                            <Input />
                         </Form.Item>
 
                         <Form.Item>

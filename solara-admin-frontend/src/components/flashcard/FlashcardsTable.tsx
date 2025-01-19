@@ -1,114 +1,178 @@
-import { ReloadOutlined } from "@ant-design/icons";
-import { useRequest } from "ahooks";
+import { ReloadOutlined, FileTextOutlined } from "@ant-design/icons";
 import { TableProps, Button, Table, Space } from "antd";
-import { useState } from "react";
-import { PageResModel, PageReqModel } from "../../types/general.type";
-// import { shortenString } from "../../utils/funcs/stringHelpers";
-import { FlashcardModel } from "../../types/flashcard.type";
-import { flashcardApi } from "../../utils/axios/flashcardApi";
+import { useEffect } from "react";
+import { ExerciseDto } from "../../types/exercise";
+import { useFlashcardStore } from '../../stores/flashcardStore';
 import FlashcardDetails from "./FlashcardDetails";
 import CreateFlashcard from "./CreateFlashcard";
 import DeleteFlashcard from "./DeleteFlashcard";
 import EditFlashcard from "./EditFlashcard";
 import AppTableQuery from "../general/AppTableQuery";
+import ManageOptions from './ManageOptions';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
-  collectionId: string
+  subTopicId: string;
 }
 
-const FlashcardsTable = (props: IProps) => {
-  const [flashcards, setFlashcards] = useState<FlashcardModel[] | undefined>([])
-  const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardModel | null>(null);
-  const [page, setPage] = useState<PageResModel>();
-  const [query, setQuery] = useState<PageReqModel>({
-    page: 1,
-    pageSize: 10,
-    sort: ""
-  });
+const FlashcardsTable = ({ subTopicId }: IProps) => {
+  const { 
+    flashcards, 
+    pagination, 
+    loading, 
+    query, 
+    setQuery, 
+    fetchFlashcards,
+    setSelectedFlashcard,
+    selectedFlashcard,
+  } = useFlashcardStore();
 
-  const updateQuery = (key: keyof PageReqModel, value: string | number) => {
-    setQuery((prevQuery) => ({
-      ...prevQuery,
-      [key]: value,
-    }));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (subTopicId) {
+      fetchFlashcards(subTopicId, query.page, query.size);
+    }
+  }, [query, subTopicId, fetchFlashcards]);
+
+  const handleReload = () => {
+    if (subTopicId) {
+      fetchFlashcards(subTopicId, query.page, query.size);
+    }
   };
 
-  const { loading, refresh } = useRequest(async () => {
-    const response = await flashcardApi.getOnCollection(props.collectionId, query);
-    setSelectedFlashcard(null)
-    setFlashcards(response.responseRequest?.content)
-    setPage(response.responseRequest?.page)
-  }, {
-    refreshDeps: [query]
-  })
-
-  const columns: TableProps<FlashcardModel>['columns'] = [
+  const columns: TableProps<ExerciseDto>['columns'] = [
     {
       title: 'No',
       dataIndex: 'no',
       key: 'no',
       render: (_, __, index: number) => index + 1,
+      width: '2%',
     },
     {
       title: 'Question',
       dataIndex: 'question',
       key: 'question',
+      width: '25%',
     },
     {
-      title: 'Action',
-      key: 'action',
-      render: (record: FlashcardModel) => (
-        <Space size="small">
-          <EditFlashcard handleReloadTable={refresh} flashcard={record}></EditFlashcard>
-          <DeleteFlashcard handleReloadTable={refresh} flashcardId={record.flashcardId}></DeleteFlashcard>
+      title: 'Diff',
+      dataIndex: 'difficulty',
+      key: 'difficulty',
+      width: '2%',
+    },
+    {
+      title: 'XP',
+      dataIndex: 'xp',
+      key: 'xp',
+      width: '2%',
+    },
+    {
+      title: 'Type',
+      dataIndex: 'exerciseTypeName',
+      key: 'exerciseTypeName',
+      width: '15%',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space>
+          <ManageOptions 
+            exerciseId={record.id} 
+            options={record.ans || []}
+            onOptionsUpdate={handleReload}
+          />
+          <EditFlashcard 
+            handleReloadTable={handleReload} 
+            flashcard={record} 
+          />
+          <DeleteFlashcard 
+            handleReloadTable={handleReload} 
+            flashcardId={record.id} 
+          />
         </Space>
       ),
     },
   ];
 
-  // Row selection configuration
-
-  // Handle row click
-  const handleRowClick = (record: FlashcardModel) => {
-    setSelectedFlashcard(record); // Set the selected flashcard to display details
+  const handleRowClick = (record: ExerciseDto) => {
+    setSelectedFlashcard(record);
   };
 
   return (
-    <div>
-      <div className="flex float-end space-x-2 p-4">
-        <Button type="dashed" onClick={refresh} icon={<ReloadOutlined />}>
-          Reload
-        </Button>
-        <CreateFlashcard collectionId={props.collectionId} handleReloadTable={refresh}></CreateFlashcard>
+    <div className="container mx-auto px-4">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
+        {/* Query Section */}
+        <div className="order-2 sm:order-1">
+          <AppTableQuery 
+            page={pagination} 
+            query={query} 
+            updateQuery={(key, value) => setQuery({ ...query, [key]: value })}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-2 order-1 sm:order-2">
+          <Button 
+            type="primary"
+            onClick={() => navigate('/exercise-types')}
+            icon={<FileTextOutlined />}
+            className="hover:scale-105 transition-transform"
+          >
+            Exercise Types
+          </Button>
+          <Button 
+            type="dashed" 
+            onClick={handleReload} 
+            icon={<ReloadOutlined />}
+            className="hover:scale-105 transition-transform"
+          >
+            Reload
+          </Button>
+          <CreateFlashcard 
+            subTopicId={subTopicId || ''}
+            handleReloadTable={handleReload}
+          />
+        </div>
       </div>
 
-      <div className="flex float-start space-x-2 p-4">
-        <AppTableQuery page={page} query={query} updateQuery={updateQuery}></AppTableQuery>
-      </div>
-
-      <div>
-        <div className='flex w-full space-x-4'>
-          <div className='w-5/12'>
+      {/* Main Content Section */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Flashcards Table */}
+        <div className="w-full lg:w-7/12">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <Table
               loading={loading}
-              className="shadow"
               dataSource={flashcards}
               columns={columns}
               pagination={false}
               onRow={(record) => ({
                 onClick: () => handleRowClick(record),
-                style: { cursor: 'pointer' }
-              })} />
-          </div>
-
-          <div className="w-7/12">
-            <FlashcardDetails handleReloadTable={refresh} flashcard={selectedFlashcard}></FlashcardDetails>
+                style: { 
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s',
+                },
+                className: 'hover:bg-gray-50',
+              })}
+              scroll={{ x: 'max-content' }}
+            />
           </div>
         </div>
 
+        {/* Flashcard Details */}
+        <div className="w-full lg:w-5/12">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <FlashcardDetails 
+              handleReloadTable={handleReload} 
+              flashcard={selectedFlashcard}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default FlashcardsTable
+export default FlashcardsTable;

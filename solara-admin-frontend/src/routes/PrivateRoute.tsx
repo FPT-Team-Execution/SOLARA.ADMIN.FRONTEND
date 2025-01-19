@@ -5,8 +5,8 @@ import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
 import { PATH_PUBLIC } from "./path.ts";
 import { notification } from "antd";
 import { messageHelper } from "../utils/funcs/messageHelper.ts";
-import { setJwtLocalStorage } from "../utils/localStorage/helper.ts";
 import React from "react";
+import axiosClient from '../utils/axios/axiosClient.ts';
 
 export default function PrivateRoute(): React.JSX.Element {
     const { user } = useUser();
@@ -28,7 +28,7 @@ export default function PrivateRoute(): React.JSX.Element {
             }
 
             const token: string | null = await getToken({ template: 'Solara' });
-            setJwtLocalStorage(token)
+            axiosClient.defaults.headers.common.Authorization = `Bearer ${token}`;
 
             notification.success({
                 message: 'Success',

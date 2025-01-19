@@ -8,7 +8,6 @@ const CollectionPage = () => {
     const navigate = useNavigate();
     const topicId = searchParams.get('topicId');
 
-
     useEffect(() => {
         if (!topicId) { // Kiểm tra nếu topicId là null, undefined hoặc rỗng
             navigate(PATH_ADMIN.topic);

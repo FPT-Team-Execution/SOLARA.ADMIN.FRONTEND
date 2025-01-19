@@ -1,60 +1,36 @@
-import { BaseModel, BaseReModel, PageReqModel, PaginationResModel } from "../../types/general.type.ts";
-import { CollectionModel, CollectionResModel, UpsertCollectionReqModel } from "../../types/collection.type.ts";
-import axiosClient from "./axiosClient.ts";
-import { COLLECTION_URL } from "../url/collectionUrl.ts";
-import { notification } from "antd";
-import { messageHelper } from "../funcs/messageHelper.ts";
+import axiosInstance  from "./axiosInstance"
+import { IPageRequest } from "../../types/general.type"
+import { UpdateSubTopicRequest } from "../../types/subTopic"
 
-interface ICollectionApi {
-    getCollections: (query: PageReqModel) => Promise<BaseReModel<PaginationResModel<CollectionModel>>>
-    getCollection: (id: string) => Promise<BaseReModel<CollectionModel>>;
-    getOnTopic: (id: string, request: PageReqModel) => Promise<BaseReModel<PaginationResModel<CollectionModel>>>;
-    postCollection: (request: UpsertCollectionReqModel) => Promise<BaseReModel<CollectionResModel>>;
-    putCollection: (id: string, request: UpsertCollectionReqModel) => Promise<BaseReModel<CollectionResModel>>;
-    deleteCollection: (id: string) => Promise<BaseModel>;
-}
+export const collectionApi = {
+    getOnTopic: async (topicId: string, query: IPageRequest) => {
+        const response = await axiosInstance.get(`/api/v1/sub-topics/topic/${topicId}`, { 
+            params: {
+                page: query.page,
+                size: query.size,
+                isAscending: query.isAscending,
+                orderOn: query.orderOn
+            } 
+        })
+        console.log('API Response:', response.data) // For debugging
+        return response.data
+    },
 
-export const collectionApi: ICollectionApi = {
-    getCollections: async (query: PageReqModel) => {
-        const response = await axiosClient.get<BaseReModel<PaginationResModel<CollectionModel>>>(COLLECTION_URL.GETS(query));
-        return response.data;
+    postCollection: async (request: UpdateSubTopicRequest) => {
+        const response = await axiosInstance.post('/api/v1/sub-topics', request)
+        return response.data
     },
-    getCollection: async (id: string) => {
-        const response = await axiosClient.get<BaseReModel<CollectionModel>>(COLLECTION_URL.GET_POS_PUT_DEL(id));
-        return response.data;
+
+    putCollection: async (id: string, request: UpdateSubTopicRequest) => {
+        const response = await axiosInstance.put(`/api/v1/sub-topics`, {
+            ...request,
+            subTopicId: id
+        })
+        return response.data
     },
-    getOnTopic: async (id: string, request: PageReqModel) => {
-        const response = await axiosClient.get<BaseReModel<PaginationResModel<CollectionModel>>>(COLLECTION_URL.GET_ON_TOPIC(id, request));
-        return response.data;
-    },
-    postCollection: async (request: UpsertCollectionReqModel) => {
-        const response = await axiosClient.post<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(), request);
-        if (response.data.isSuccess == true) {
-            notification.success({
-                message: "Sucess",
-                description: messageHelper.createSucess("collection")
-            })
-        }
-        return response.data;
-    },
-    putCollection: async (id: string, request: UpsertCollectionReqModel) => {
-        const response = await axiosClient.put<BaseReModel<CollectionResModel>>(COLLECTION_URL.GET_POS_PUT_DEL(id), request);
-        if (response.data.isSuccess == true) {
-            notification.success({
-                message: "Sucess",
-                description: messageHelper.updateSucess("collection")
-            })
-        }
-        return response.data;
-    },
+
     deleteCollection: async (id: string) => {
-        const response = await axiosClient.delete<BaseModel>(COLLECTION_URL.GET_POS_PUT_DEL(id));
-        if (response.data.isSuccess == true) {
-            notification.success({
-                message: "Sucess",
-                description: messageHelper.deleteSucess("collection")
-            })
-        }
-        return response.data;
+        const response = await axiosInstance.delete(`/api/v1/sub-topics/${id}`)
+        return response.data
     }
 }
