@@ -59,10 +59,15 @@ export const Orders = () => {
             key: 'orderStatus',
         },
         {
-            title: 'Created At',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            render: (date: string) => new Date(date).toLocaleDateString(),
+            title: 'Payment Date',
+            dataIndex: 'paymentDate',
+            key: 'paymentDate',
+            render: (date: string) => {
+                const parsedDate = new Date(date);
+                return isNaN(parsedDate.getTime())
+                    ? 'Invalid Date'
+                    : parsedDate.toLocaleDateString(); // Hiển thị theo định dạng mặc định của locale
+            },
         },
         {
             title: 'Total Amount',
@@ -80,7 +85,7 @@ export const Orders = () => {
                 page: pagination.current,
                 size: pagination.pageSize,
                 ...(searchKey && { search: searchKey }),
-                ...(status !== 'All' && { status }),
+                ...(status !== 'All' && {  OrderStatus: status }),
                 ...(dateRange && { startDate: dateRange[0], endDate: dateRange[1] }),
             };
 
