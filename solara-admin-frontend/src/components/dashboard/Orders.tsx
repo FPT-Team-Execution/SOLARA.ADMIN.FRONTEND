@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Table, Card, Input, Select, DatePicker, Button, Row, Col } from 'antd';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined, DownloadOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { orderApi, OrderDto } from "../../utils/axios/orderApi.ts";
 import { IPageRequest } from "../../types/general.type.ts";
+import { exportToCSV } from "../../utils/exportToCSV.ts"; // Import the exportToCSV utility
 
 const { Search } = Input;
 const { RangePicker } = DatePicker;
@@ -114,13 +115,22 @@ export const Orders = () => {
         setDateRange(dateStrings);
     };
 
+    const handleExport = () => {
+        exportToCSV(orders, 'orders.csv');
+    };
+
     return (
         <Card
             title="Orders"
             extra={
-                <Button icon={<ReloadOutlined />} onClick={fetchOrders}>
-                    Refresh
-                </Button>
+                <>
+                    <Button icon={<DownloadOutlined />} onClick={handleExport} style={{ marginRight: 8 }}>
+                        Export
+                    </Button>
+                    <Button icon={<ReloadOutlined />} onClick={fetchOrders}>
+                        Refresh
+                    </Button>
+                </>
             }
         >
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
