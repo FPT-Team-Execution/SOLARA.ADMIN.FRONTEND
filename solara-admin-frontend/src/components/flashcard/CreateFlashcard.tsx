@@ -188,7 +188,12 @@ const CreateFlashcard = (props: IProps) => {
           </Button>,
         ]}
       >
-        <Form form={form} onFinish={handleSubmit} layout="vertical">
+        <Form form={form} onFinish={handleSubmit} layout="vertical" 
+          initialValues={{
+            difficulty: "Medium", 
+            xp: 50,               
+          }}
+        >
           <Form.Item
             label="Question"
             name="question"
