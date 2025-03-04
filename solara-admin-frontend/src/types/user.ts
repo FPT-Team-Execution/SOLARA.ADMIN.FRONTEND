@@ -1,7 +1,7 @@
 import { IPageRequest } from './general.type';
 
 export type UserDto = {
-    userId: string;
+    id: string;
     email: string;
     fullName: string;
     gender: string;

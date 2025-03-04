@@ -136,12 +136,6 @@ const BaseLayout = ({ children }: PropsWithChildren) => {
                 <Layout>
                     <Header style={{ padding: 0, background: isDarkMode ? '#141414' : '#fff' }} className='shadow-md'>
                         <Flex justify='end' align='center' className='h-full px-10'>
-                            {/* <Dropdown menu={{ items: itemsMenu }} arrow placement='bottomRight'>
-                <Space size={10} align='center' className='cursor-pointer'>
-                  <Avatar src={user?.imageUrl} />
-                  <Typography>{user?.fullName}</Typography>
-                </Space>
-              </Dropdown> */}
                             <UserButton />
                         </Flex>
                     </Header>

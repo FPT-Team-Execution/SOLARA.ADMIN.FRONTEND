@@ -42,7 +42,7 @@ export const userApi: IUserApi = {
         const response = await axiosClient.delete<IBaseModel<UserDto>>(USER_URL.GET_POS_PUT_DEL(id));
         if (response.data.isSuccess) notification.success({
             message: 'Success',
-            description: messageHelper.deleteSucess("user")
+            description: messageHelper.deleteSuccess("user")
         })
         return response.data;
     }
