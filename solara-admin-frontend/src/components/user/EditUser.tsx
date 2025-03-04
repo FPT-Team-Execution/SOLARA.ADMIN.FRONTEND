@@ -20,7 +20,7 @@ const EditUser: React.FC<Props> = ({ user, handleReloadTable }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...values,
-                    clerkUserId: user.userId
+                    clerkUserId: user.id
                 })
             });
             if (response.ok) {

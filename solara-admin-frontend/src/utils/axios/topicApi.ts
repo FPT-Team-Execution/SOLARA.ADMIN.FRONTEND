@@ -42,7 +42,7 @@ export const topicApi: ITopicApi = {
         const response = await axiosClient.delete<IBaseModel<TopicDto>>(TOPIC_URL.GET_POS_PUT_DEL(id));
         if (response.data.isSuccess == true) notification.success({
             message: 'Success',
-            description: messageHelper.deleteSucess("topic")
+            description: messageHelper.deleteSuccess("topic")
         })
         return response.data;
     }
