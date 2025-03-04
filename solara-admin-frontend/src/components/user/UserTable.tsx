@@ -2,8 +2,8 @@ import { useState } from "react";
 import { UserDto } from "../../types/user";
 import { IPageRequest, IPaginate } from "../../types/general.type";
 import { useRequest } from "ahooks";
-import  {userApi}  from "../../utils/axios/userApi";
-import { Button, Space, Table, TableProps } from "antd";
+import { userApi } from "../../utils/axios/userApi";
+import { Button, Space, Table, TableProps, Tag } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import { formatDateTime } from "../../utils/funcs/datetimeHelper";
 import DeleteUser from "./DeleteUser";
@@ -36,21 +36,35 @@ const UserTable = () => {
     });
 
     const columns: TableProps<UserDto>['columns'] = [
-        {
-            title: 'Full Name',
-            dataIndex: 'fullName',
-            key: 'fullName',
+        { 
+            title: 'Avatar', 
+            dataIndex: 'avatarUrl', 
+            key: 'avatarUrl',
+            render: (avatarUrl) => (
+                <img 
+                    src={avatarUrl || "/default-avatar.png"} 
+                    alt="Avatar" 
+                    style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }}
+                />
+            ) 
         },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
+        { title: 'Full Name', dataIndex: 'fullName', key: 'fullName' },
+        { title: 'Email', dataIndex: 'email', key: 'email' },
+        { 
+            title: 'Email Confirm', 
+            dataIndex: 'emailConfirm', 
+            key: 'emailConfirm',
+            render: (emailConfirm) => (
+                <Tag color={emailConfirm ? "green" : "red"}>{emailConfirm ? "Confirmed" : "Not Confirmed"}</Tag>
+            ) 
         },
-        {
-            title: 'Created At',
-            dataIndex: 'createdOn',
-            key: 'createdOn',
-            render: (datetime) => formatDateTime(datetime)
+        { title: 'Gender', dataIndex: 'gender', key: 'gender' },
+        { title: 'Role', dataIndex: 'roleName', key: 'roleName' },
+        { 
+            title: 'Created At', 
+            dataIndex: 'createdOn', 
+            key: 'createdOn', 
+            render: (datetime) => formatDateTime(datetime) 
         },
         {
             title: 'Action',
@@ -58,7 +72,7 @@ const UserTable = () => {
             render: (record: UserDto) => (
                 <Space size="small">
                     <EditUser user={record} handleReloadTable={refresh} />
-                    <DeleteUser handleReloadTable={refresh} id={record.userId} />
+                    <DeleteUser handleReloadTable={refresh} id={record.id} />
                 </Space>
             ),
         },

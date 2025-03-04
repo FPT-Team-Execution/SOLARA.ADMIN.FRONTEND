@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Modal, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import { userApi } from '../../utils/axios/userApi';
 
 interface Props {
     id: string;
@@ -10,14 +11,12 @@ interface Props {
 const DeleteUser: React.FC<Props> = ({ id, handleReloadTable }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-
     const handleDelete = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`/api/v1/users/${id}`, {
-                method: 'DELETE',
-            });
-            if (response.ok) {
+            const response = await userApi.deleteUser(id);
+
+            if (response.isSuccess) {
                 message.success('User deleted successfully');
                 handleReloadTable();
                 setIsOpen(false);

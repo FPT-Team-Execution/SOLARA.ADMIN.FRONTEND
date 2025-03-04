@@ -5,7 +5,7 @@ export const messageHelper = {
     noPermission: (): string => {
         return "You have no permission!"
     },
-    deleteSucess: (objectName: string): string => {
+    deleteSuccess: (objectName: string): string => {
         return `Delete ${objectName} successfully!`
     },
     updateSucess: (objectName: string): string => {
